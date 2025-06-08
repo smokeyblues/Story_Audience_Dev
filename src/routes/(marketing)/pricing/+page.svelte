@@ -3,47 +3,122 @@
   import { WebsiteName } from "./../../../config"
 
   type PlanFeatureRow = {
+    // name: string
+    // freeIncluded?: boolean
+    // proIncluded?: boolean
+    // freeString?: string
+    // proString?: string
+    // header?: boolean
+
     name: string
-    freeIncluded?: boolean
-    proIncluded?: boolean
-    freeString?: string
-    proString?: string
+    creativeIncluded?: boolean // Corresponds to 'free' tier
+    producerIncluded?: boolean // Corresponds to 'mid' tier
+    executiveIncluded?: boolean // Corresponds to 'high' tier
+    creativeString?: string
+    producerString?: string
+    executiveString?: string
     header?: boolean
+    tooltip?: string // Optional: Add tooltips for feature explanations
   }
 
   const planFeatures: PlanFeatureRow[] = [
+    // --- Core Planning ---
     {
-      name: "Section 1",
+      name: "Core Planning Tools",
       header: true,
     },
     {
-      name: "Feature 1",
-      freeIncluded: true,
-      proIncluded: true,
+      name: "Structured Bible Sections (Treat, Biz, Func, Design, Tech)",
+      creativeIncluded: true, // Assuming all sections available structure-wise
+      producerIncluded: true,
+      executiveIncluded: true,
+      tooltip:
+        "Access all sections of the Transmedia Production Bible framework.",
     },
     {
-      name: "Feature 2",
-      freeIncluded: false,
-      proIncluded: true,
+      name: "Rich Text Editing",
+      creativeIncluded: true,
+      producerIncluded: true,
+      executiveIncluded: true,
     },
     {
-      name: "Feature 3",
-      freeString: "3",
-      proString: "Unlimited",
+      name: "Manual Feedback Log",
+      creativeIncluded: true,
+      producerIncluded: true,
+      executiveIncluded: true,
+      tooltip: "Manually record feedback received from external sources.",
     },
+    // --- Collaboration & Projects ---
     {
-      name: "Section 2",
+      name: "Collaboration & Projects",
       header: true,
     },
     {
-      name: "Feature 4",
-      freeIncluded: true,
-      proIncluded: true,
+      name: "Projects",
+      creativeString: "1",
+      producerString: "5",
+      executiveString: "Unlimited",
     },
     {
-      name: "Feature 5",
-      freeIncluded: false,
-      proIncluded: true,
+      name: "Team Members",
+      creativeString: "1 (Solo)",
+      producerString: "Up to 5",
+      executiveString: "Up to 15+", // Or "Contact Us"
+    },
+    {
+      name: "Basic Project Export (Text/Markdown)",
+      creativeIncluded: false,
+      producerIncluded: true,
+      executiveIncluded: true,
+      tooltip: "Export your bible content for offline use or sharing.",
+    },
+    // --- Assets & Creation ---
+    {
+      name: "Assets & Creation",
+      header: true,
+    },
+    {
+      name: "Asset Storage",
+      creativeString: "100 MB",
+      producerString: "1 GB",
+      executiveString: "10 GB+", // Example limits
+    },
+    {
+      name: "AI Concept Image Generation (Future)",
+      creativeIncluded: false,
+      producerString: "Limited Credits (Soon)",
+      executiveString: "More Credits (Soon)",
+      tooltip: "Planned feature: Generate visuals directly from descriptions.",
+    },
+    {
+      name: "Virtual Studio Asset Library Access (Future)",
+      creativeIncluded: false,
+      producerString: "View Access (Planned)",
+      executiveString: "Usage Access (Planned)",
+      tooltip: "Planned feature: Use curated environments & characters.",
+    },
+    // --- Community & Support ---
+    {
+      name: "Community & Support",
+      header: true,
+    },
+    {
+      name: "Discord Community Access",
+      creativeIncluded: true,
+      producerIncluded: true,
+      executiveIncluded: true,
+    },
+    {
+      name: "Standard Email Support",
+      creativeIncluded: false, // Or basic support
+      producerIncluded: true,
+      executiveIncluded: true,
+    },
+    {
+      name: "Priority Support",
+      creativeIncluded: false,
+      producerIncluded: false,
+      executiveIncluded: true,
     },
   ]
 </script>
@@ -168,9 +243,9 @@
               <tr class="relative">
                 <td>{feature.name} </td>
                 <td class="text-center">
-                  {#if feature.freeString}
-                    {feature.freeString}
-                  {:else if feature.freeIncluded}
+                  {#if feature.creativeString}
+                    {feature.creativeString}
+                  {:else if feature.creativeIncluded}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-8 h-8 ml-2 inline text-success"
@@ -187,9 +262,28 @@
                   {/if}
                 </td>
                 <td class="text-center">
-                  {#if feature.proString}
-                    {feature.proString}
-                  {:else if feature.proIncluded}
+                  {#if feature.producerString}
+                    {feature.producerString}
+                  {:else if feature.producerIncluded}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-8 h-8 ml-2 inline text-success"
+                    >
+                      <use href="#checkcircle" />
+                    </svg>
+                  {:else}
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      class="w-[26px] h-[26px] inline text-base-200"
+                    >
+                      <use href="#nocircle" />
+                    </svg>
+                  {/if}
+                </td>
+                <td class="text-center">
+                  {#if feature.executiveString}
+                    {feature.executiveString}
+                  {:else if feature.executiveIncluded}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-8 h-8 ml-2 inline text-success"
