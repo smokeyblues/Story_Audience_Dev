@@ -13,7 +13,7 @@
     name: string
     creativeIncluded?: boolean // Corresponds to 'free' tier
     producerIncluded?: boolean // Corresponds to 'mid' tier
-    executiveIncluded?: boolean // Corresponds to 'high' tier
+    executiveIncluded?: boolean // Corresponds to 'high' tier, you can rename these as needed
     creativeString?: string
     producerString?: string
     executiveString?: string
