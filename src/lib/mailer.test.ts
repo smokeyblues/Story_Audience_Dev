@@ -122,8 +122,10 @@ describe("mailer", () => {
       expect(email.from).toEqual("from@example.com")
       expect(email.to).toEqual(["to@example.com"])
       expect(email.subject).toEqual("Test subject")
-      expect(email.text).toContain("This is a quick sample of a welcome email")
-      expect(email.html).toContain("This is a quick sample of a welcome email")
+      expect(email.text).toContain(
+        "A big welcome to the Test Company community",
+      )
+      expect(email.html).toContain('<html lang="en">')
       expect(email.html).toContain("<html")
       expect(email.html).toContain("https://test.com")
       expect(email.html).toContain("Test Company")
