@@ -6,9 +6,6 @@ export const load: PageServerLoad = async ({ locals: { supabase, user } }) => {
     redirect(303, "/login") // Or your specific login path
   }
 
-  // Verify project access using the RLS helper function implicitly via queries
-  // Fetching the core treatment data - RLS ensures user has access
-
   const wishListPromise = supabase
     .from("wish_list_items")
     .select("*")
@@ -25,6 +22,7 @@ export const load: PageServerLoad = async ({ locals: { supabase, user } }) => {
     console.error("Error loading wish list items:", wishListItemsError.message)
 
   return {
+    // Ensure we pass back null or data, never undefined for treatment
     wishListItems: wishListItems ?? [],
   }
 }
@@ -39,34 +37,21 @@ export const actions: Actions = {
       return fail(400, {
         action: actionName,
         description: "",
-        error: "Plot point description cannot be empty.",
-      })
-    }
-    const { count, error: countError } = await supabase
-      .from("wish_list_items")
-      .select("*", { count: "exact", head: true })
-      .eq("user_id", user.id)
-    if (countError) {
-      console.error("Error counting plot points:", countError)
-      return fail(500, {
-        action: actionName,
-        description,
-        error: "Database error determining order.",
+        error: "Wish list item description cannot be empty.",
       })
     }
     const { error: insertError } = await supabase
       .from("wish_list_items")
       .insert({
-        user_id: user.id,
         description: description,
-        order_index: count ?? 0,
+        user_id: user.id,
       })
     if (insertError) {
       console.error("Error adding wish list item:", insertError)
       return fail(500, {
         action: actionName,
         description,
-        error: `Database error: ${insertError.message}`,
+        error: `Database error: ${(insertError as { message: string }).message}`,
       })
     }
     return {
@@ -76,7 +61,6 @@ export const actions: Actions = {
       message: "Wish list item added.",
     } // <<< Added action
   },
-
   updateWishListItem: async ({ request, locals: { supabase, user } }) => {
     const actionName = "updateWishListItem" // <<< Define action name
     if (!user) return fail(401, { action: actionName, message: "Unauthorized" })
@@ -113,7 +97,6 @@ export const actions: Actions = {
       message: "Wish list item updated.",
     } // <<< Added action
   },
-
   deleteWishListItem: async ({ request, locals: { supabase, user } }) => {
     const actionName = "deleteWishListItem" // <<< Define action name
     if (!user) return fail(401, { action: actionName, message: "Unauthorized" })
