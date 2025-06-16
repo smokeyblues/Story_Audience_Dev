@@ -1,9 +1,12 @@
 <script lang="ts">
   import { getContext } from "svelte"
+  import type { PageData } from "./$types"
   import type { Writable } from "svelte/store"
 
   let adminSection: Writable<string> = getContext("adminSection")
   adminSection.set("home")
+
+  let { data }: { data: PageData } = $props()
 </script>
 
 <svelte:head>
@@ -25,7 +28,12 @@
     /></svg
   >
   <div>
-    <div class="font-bold">Demo Content, Bitches</div>
+    <div class="font-bold">
+      <!-- Demo Content, Bitches -->
+      <div class="text-sm">
+        Welcome, {data.profile?.full_name ?? data.user?.email ?? "User"}!
+      </div>
+    </div>
     <div class="my-2">
       This page currently serves as a provisional placeholder. Kindly supplant
       this content with the bespoke features and refined functionality of your
@@ -35,7 +43,7 @@
 </div>
 
 <div class="my-6">
-  <h1 class="text-xl font-bold mb-1">Wish List</h1>
+  <a href="account/wish-list" class="text-xl font-bold mb-1 link">Wish List</a>
   <div class="stats shadow-sm stats-vertical sm:stats-horizontal sm:w-[420px]">
     <!-- <div class="stat place-items-center">
       <div class="stat-title">Downloads</div>
