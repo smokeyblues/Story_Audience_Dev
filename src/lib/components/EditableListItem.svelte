@@ -4,6 +4,7 @@
   // import { createEventDispatcher } from "svelte"
   import type { SubmitFunction } from "@sveltejs/kit"
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type Item = {
     id: string
     description: string
@@ -12,18 +13,21 @@
 
   let {
     item,
+    field = "description", // default to "description"
     updateAction, // e.g., "?/updatePlotPoint"
     deleteAction, // e.g., "?/deletePlotPoint"
     textAreaRows = 2, // Default rows for textarea
   }: {
-    item: Item
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    item: Record<string, any>
+    field?: string
     updateAction: string
     deleteAction: string
     textAreaRows?: number
   } = $props()
 
   let editing = $state(false)
-  let editedDescription = $state(item.description)
+  let editedValue = $state(item[field])
   let isDeleting = $state(false)
   let isSaving = $state(false)
   let formError = $state<string | null>(null)
@@ -31,7 +35,7 @@
   // const dispatch = createEventDispatcher()
 
   function handleEditClick() {
-    editedDescription = item.description // Reset on opening edit mode
+    editedValue = item[field] // Reset on opening edit mode
     editing = true
     formError = null
   }
@@ -86,7 +90,7 @@
       } else if (result.type === "success") {
         editing = false // Close edit mode on success
         // Optional dispatch
-        // dispatch('updated', { id: item.id, description: editedDescription });
+        // dispatch('updated', { id: item.id, description: editedValue });
       }
     }
   }
@@ -94,7 +98,7 @@
   // Reset local state if the item prop itself changes externally
   $effect(() => {
     if (!editing) {
-      editedDescription = item.description
+      editedValue = item[field]
     }
   })
 </script>
@@ -102,7 +106,7 @@
 <div class="p-3 bg-base-100 rounded shadow-sm group">
   {#if !editing}
     <div class="flex flex-col md:flex-row justify-between items-start gap-2">
-      <p class="whitespace-pre-wrap flex-1 py-1">{item.description}</p>
+      <p class="whitespace-pre-wrap flex-1 py-1">{item[field]}</p>
       <div class="flex gap-1 flex-shrink-0 self-end md:self-center">
         <button
           onclick={handleEditClick}
@@ -131,8 +135,8 @@
     <form method="POST" action={updateAction} use:enhance={handleUpdate}>
       <input type="hidden" name="id" value={item.id} />
       <textarea
-        name="description"
-        bind:value={editedDescription}
+        name={field}
+        bind:value={editedValue}
         class="textarea textarea-bordered w-full mb-2"
         rows={textAreaRows}
         required

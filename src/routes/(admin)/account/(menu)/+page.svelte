@@ -59,7 +59,7 @@
   </div>
 </div>
 <div class="my-6">
-  <h1 class="text-xl font-bold mb-1">Premises</h1>
+  <a href="account/premises" class="text-xl font-bold mb-1 link">Premises</a>
   <div class="stats shadow-sm stats-vertical sm:stats-horizontal sm:w-[420px]">
     <!-- <div class="stat place-items-center">
       <div class="stat-title">New Registers</div>

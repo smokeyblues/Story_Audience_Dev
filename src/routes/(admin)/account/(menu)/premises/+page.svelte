@@ -6,7 +6,7 @@
   // import type { Database } from "../../../../../DatabaseDefinitions"
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
-  let wishListItems = $derived(data.wishListItems ?? [])
+  let premises = $derived(data.premises ?? [])
   let currentForm = $state<ActionData>(null)
   $effect(() => {
     currentForm = form
@@ -21,37 +21,36 @@
 </script>
 
 <section>
-  <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Wish List</h2>
+  <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Premises</h2>
   <p class="text-sm mb-4">
-    List everything you'd love to see in a story (characters, twists, themes,
-    genres you're passionate about). Don't filter.
+    List every premise you've ever thought of, each in a single sentence.
   </p>
   <div class="space-y-3 mb-6">
-    {#each wishListItems as item (item.id)}
+    {#each premises as premise (premise.id)}
       <EditableListItem
-        {item}
-        field="description"
-        updateAction="?/updateWishListItem"
-        deleteAction="?/deleteWishListItem"
+        item={premise}
+        field="premise"
+        updateAction="?/updatePremise"
+        deleteAction="?/deletePremise"
       />
     {/each}
   </div>
   <form
     method="POST"
-    action="?/addWishListItem"
+    action="?/addPremise"
     use:enhance
     class="flex items-start gap-2"
   >
     <textarea
-      name="description"
+      name="premise"
       class="textarea textarea-bordered w-full max-w-lg"
-      placeholder="New wish list item description..."
+      placeholder="New premise..."
       required
       rows="2"
     ></textarea>
-    <button type="submit" class="btn btn-secondary">Add Item</button>
+    <button type="submit" class="btn btn-secondary">Add Premise</button>
   </form>
-  {#if currentForm?.action === "addWishListItem" || currentForm?.action === "deleteWishListItem"}
+  {#if currentForm?.action === "addPremise" || currentForm?.action === "deletePremise"}
     {#if currentForm?.success}
       <p class="text-success text-sm mt-1">{currentForm.message}</p>
     {/if}

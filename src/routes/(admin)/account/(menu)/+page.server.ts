@@ -15,17 +15,30 @@ export const load: PageServerLoad = async ({ locals: { supabase, user } }) => {
     .eq("user_id", user.id)
     .order("created_at", { ascending: true })
 
+  const premisesPromise = supabase
+    .from("premises")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true })
+
   // Run all data fetching in parallel
-  const [{ data: wishListItems, error: wishListItemsError }] =
-    await Promise.all([wishListPromise])
+  const [
+    { data: wishListItems, error: wishListItemsError },
+    { data: premises, error: premisesError },
+  ] = await Promise.all([wishListPromise, premisesPromise])
 
   // Check for critical errors (e.g., if RLS denied access unexpectedly)
   // Individual sections might fail gracefully, but log errors.
-  if (wishListItemsError)
+  if (wishListItemsError) {
     console.error("Error loading wish list items:", wishListItemsError.message)
+  }
+  if (premisesError) {
+    console.error("Error loading premises:", premisesError.message)
+  }
 
   return {
     wishListItems: wishListItems ?? [],
+    premises: premises ?? [],
   }
 }
 
