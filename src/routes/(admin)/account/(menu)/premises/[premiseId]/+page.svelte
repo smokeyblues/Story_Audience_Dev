@@ -1,7 +1,7 @@
 <script lang="ts">
   // src/routes/(admin)/account/(menu)/premises/[premiseId]/+page.svelte
 
-  import type { PageData } from "../$types"
+  import type { PageData } from "./$types"
   import { page } from "$app/stores"
   import { supabase } from "$lib/supabaseClient"
 
@@ -71,8 +71,8 @@
   }
 
   async function handleSave() {
-    if (!pitchPackage || !selectedTitle) {
-      saveError = "No pitch package data to save."
+    if (!pitchPackage || !selectedTitle || !premise) {
+      saveError = "No pitch package data or premise to save."
       return
     }
 
@@ -92,6 +92,7 @@
     try {
       const { error } = await supabase.from("story_sparks").insert({
         user_id: user.id,
+        premise_id: premise.id,
         title: [selectedTitle],
         logline: pitchPackage.logline,
         comparisons: pitchPackage.comparisons,

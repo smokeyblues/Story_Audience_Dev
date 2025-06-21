@@ -102,6 +102,7 @@ export type Database = {
           hero_save_the_cat_moment: string
           id: number
           logline: string
+          premise_id: string | null
           story_engine: string
           story_roadmap: string[]
           thematic_premise: string
@@ -116,6 +117,7 @@ export type Database = {
           hero_save_the_cat_moment: string
           id?: number
           logline: string
+          premise_id?: string | null
           story_engine: string
           story_roadmap: string[]
           thematic_premise: string
@@ -130,13 +132,22 @@ export type Database = {
           hero_save_the_cat_moment?: string
           id?: number
           logline?: string
+          premise_id?: string | null
           story_engine?: string
           story_roadmap?: string[]
           thematic_premise?: string
           title?: string[]
           user_id?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "story_sparks_premise_id_fkey"
+            columns: ["premise_id"]
+            isOneToOne: false
+            referencedRelation: "premises"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       stripe_customers: {
         Row: {
