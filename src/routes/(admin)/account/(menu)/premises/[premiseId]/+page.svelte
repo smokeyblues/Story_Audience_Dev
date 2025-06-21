@@ -82,7 +82,7 @@
             bind:group={selectedItems}
             value={item.description}
           />
-          <span class="label-text">{item.description}</span>
+          <span class="label-text break-words">{item.description}</span>
         </label>
       {/each}
     </div>

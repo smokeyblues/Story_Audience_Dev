@@ -93,6 +93,51 @@ export type Database = {
         }
         Relationships: []
       }
+      story_sparks: {
+        Row: {
+          comparisons: string
+          created_at: string
+          hero_description: string
+          hero_name: string
+          hero_save_the_cat_moment: string
+          id: number
+          logline: string
+          story_engine: string
+          story_roadmap: string[]
+          thematic_premise: string
+          title: string[]
+          user_id: string
+        }
+        Insert: {
+          comparisons: string
+          created_at?: string
+          hero_description: string
+          hero_name: string
+          hero_save_the_cat_moment: string
+          id?: number
+          logline: string
+          story_engine: string
+          story_roadmap: string[]
+          thematic_premise: string
+          title: string[]
+          user_id: string
+        }
+        Update: {
+          comparisons?: string
+          created_at?: string
+          hero_description?: string
+          hero_name?: string
+          hero_save_the_cat_moment?: string
+          id?: number
+          logline?: string
+          story_engine?: string
+          story_roadmap?: string[]
+          thematic_premise?: string
+          title?: string[]
+          user_id?: string
+        }
+        Relationships: []
+      }
       stripe_customers: {
         Row: {
           stripe_customer_id: string | null
