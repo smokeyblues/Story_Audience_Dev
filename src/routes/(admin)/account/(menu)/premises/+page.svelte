@@ -27,12 +27,14 @@
   </p>
   <div class="space-y-3 mb-6">
     {#each premises as premise (premise.id)}
-      <EditableListItem
-        item={premise}
-        field="premise"
-        updateAction="?/updatePremise"
-        deleteAction="?/deletePremise"
-      />
+      <a href="premises/{premise.id}">
+        <EditableListItem
+          item={premise}
+          field="premise"
+          updateAction="?/updatePremise"
+          deleteAction="?/deletePremise"
+        />
+      </a>
     {/each}
   </div>
   <form
@@ -58,4 +60,7 @@
       <p class="text-error text-sm mt-1">{currentForm.error}</p>
     {/if}
   {/if}
+  <div class="my-6">
+    <p class="text-sm">Select a premise to get started.</p>
+  </div>
 </section>
