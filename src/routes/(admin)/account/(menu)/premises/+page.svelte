@@ -29,6 +29,29 @@
   <p class="text-sm mb-4">
     List every premise you've ever thought of, each in a single sentence.
   </p>
+  <form
+    method="POST"
+    action="?/addPremise"
+    use:enhance
+    class="flex items-start gap-2 mb-6"
+  >
+    <textarea
+      name="premise"
+      class="textarea textarea-bordered w-full max-w-lg"
+      placeholder="New premise..."
+      required
+      rows="2"
+    ></textarea>
+    <button type="submit" class="btn btn-secondary">Add Premise</button>
+  </form>
+  {#if currentForm?.action === "addPremise" || currentForm?.action === "deletePremise"}
+    {#if currentForm?.success}
+      <p class="text-success text-sm mt-1">{currentForm.message}</p>
+    {/if}
+    {#if currentForm?.error}
+      <p class="text-error text-sm mt-1">{currentForm.error}</p>
+    {/if}
+  {/if}
   <div class="space-y-3 mb-6">
     {#each premises as premise (premise.id)}
       <div class="collapse collapse-arrow bg-base-200">
@@ -71,31 +94,5 @@
         </div>
       </div>
     {/each}
-  </div>
-  <form
-    method="POST"
-    action="?/addPremise"
-    use:enhance
-    class="flex items-start gap-2"
-  >
-    <textarea
-      name="premise"
-      class="textarea textarea-bordered w-full max-w-lg"
-      placeholder="New premise..."
-      required
-      rows="2"
-    ></textarea>
-    <button type="submit" class="btn btn-secondary">Add Premise</button>
-  </form>
-  {#if currentForm?.action === "addPremise" || currentForm?.action === "deletePremise"}
-    {#if currentForm?.success}
-      <p class="text-success text-sm mt-1">{currentForm.message}</p>
-    {/if}
-    {#if currentForm?.error}
-      <p class="text-error text-sm mt-1">{currentForm.error}</p>
-    {/if}
-  {/if}
-  <div class="my-6">
-    <p class="text-sm">Select a premise to get started.</p>
   </div>
 </section>
