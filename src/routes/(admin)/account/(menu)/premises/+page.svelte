@@ -83,6 +83,11 @@
                 </li>
               {/each}
             </ul>
+            <div class="p-4 text-center">
+              <a href={`premises/${premise.id}`} class="btn btn-primary"
+                >Generate Another</a
+              >
+            </div>
           {:else}
             <div class="p-4 text-center">
               <p class="mb-4">You don't have any sparks for this premise.</p>
