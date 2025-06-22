@@ -132,14 +132,16 @@
     <legend class="fieldset-legend">Add Wish List Items</legend>
     <div class="grid grid-cols-1 gap-2 sm:grid-cols-2">
       {#each items as item}
-        <label class="label">
+        <label class="label cursor-pointer items-start">
           <input
             type="checkbox"
             class="checkbox"
             bind:group={selectedItems}
             value={item.description}
           />
-          <span class="label-text break-words">{item.description}</span>
+          <span class="label-text whitespace-normal break-words"
+            >{item.description}</span
+          >
         </label>
       {/each}
     </div>
@@ -330,7 +332,7 @@
           <div>
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              class="h-6 w-6 shrink-0 stroke-current"
+              class="h-6 w-6 shrink-0 stroke--current"
               fill="none"
               viewBox="0 0 24 24"
             >
