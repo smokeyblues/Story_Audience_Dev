@@ -79,20 +79,26 @@
             <ul class="menu p-2">
               {#each premise.story_sparks as spark}
                 <li>
-                  <a href={`/story-sparks/${spark.id}`}>{spark.title[0]}</a>
+                  <a
+                    href={`/account/premises/${premise.id}/sparks/${spark.id}`}
+                  >
+                    {spark.title[0]}
+                  </a>
                 </li>
               {/each}
             </ul>
             <div class="p-4 text-center">
-              <a href={`premises/${premise.id}`} class="btn btn-primary"
-                >Generate Another</a
+              <a
+                href={`/account/premises/${premise.id}`}
+                class="btn btn-primary">Generate Another</a
               >
             </div>
           {:else}
             <div class="p-4 text-center">
               <p class="mb-4">You don't have any sparks for this premise.</p>
-              <a href={`premises/${premise.id}`} class="btn btn-primary"
-                >Generate a Story Spark</a
+              <a
+                href={`/account/premises/${premise.id}`}
+                class="btn btn-primary">Generate a Story Spark</a
               >
             </div>
           {/if}

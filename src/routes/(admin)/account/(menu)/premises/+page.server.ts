@@ -12,9 +12,16 @@ export const load: PageServerLoad = async ({ locals: { supabase, user } }) => {
     .eq("user_id", user.id)
     .order("created_at", { ascending: true })
 
+  const sparksPromise = supabase
+    .from("story_sparks")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: true })
+
   // Run all data fetching in parallel
   const [{ data: premises, error: premisesError }] = await Promise.all([
     premisesPromise,
+    sparksPromise,
   ])
 
   // Check for critical errors (e.g., if RLS denied access unexpectedly)
