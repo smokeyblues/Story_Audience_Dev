@@ -4,6 +4,7 @@
   import type { PageData } from "./$types"
   import { page } from "$app/stores"
   import { supabase } from "$lib/supabaseClient"
+  import { goto } from "$app/navigation"
 
   interface HeroProfile {
     name: string
@@ -109,6 +110,7 @@
       }
 
       saveSuccess = true
+      await goto("/account/premises")
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error)
       console.error("Error saving story spark:", message)
