@@ -78,7 +78,7 @@
         <div
           class="normal-case menu-title text-xl font-bold text-primary flex flex-row"
         >
-          <a href="/" class="grow">{WebsiteName}</a>
+          <a href="/" class="grow font-cinzel-decorative">{WebsiteName}</a>
           <label for="admin-drawer" class="lg:hidden ml-3"> &#x2715; </label>
         </div>
       </li>
@@ -103,6 +103,14 @@
           >
           Home
         </a>
+        <ul class="menu-nested indent-4">
+          <li>
+            <a href="/account/wish-list">Wish List</a>
+          </li>
+          <li>
+            <a href="/account/premises">Premises</a>
+          </li>
+        </ul>
       </li>
       <li>
         <a
