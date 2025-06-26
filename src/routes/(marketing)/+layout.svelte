@@ -88,22 +88,13 @@
       <a class="link link-hover mb-1" href="/">Overview</a>
       <a class="link link-hover my-1" href="/pricing">Pricing</a>
       <a class="link link-hover my-1" href="/contact_us">Contact Us</a>
-      <a
-        class="link link-hover my-1"
-        href="https://github.com/CriticalMoments/CMSaasStarter">Github</a
-      >
     </nav>
     <aside>
-      <span class="footer-title opacity-80">Sponsor</span>
-      <a class="max-w-[260px]" href="https://getkiln.ai">
-        <div class="font-bold text-3xl mb-1">Kiln AI</div>
-        <div class="font-medium mb-3">Build High Quality AI Products</div>
-        <div class="font-light">
-          Use advanced AI tactics, and collaborate with your team. Free apps for
-          Mac and Windows.
-        </div>
-        <div class="link text-sm font-bold mt-2">Learn More</div>
-      </a>
+      <span class="footer-title opacity-80">KNOCK YOURSELF OUT</span>
+      <a class="link link-hover my-1" href="/terms-of-service"
+        >Terms of Service</a
+      >
+      <a class="link link-hover my-1" href="/privacy-policy">Privacy Policy</a>
     </aside>
   </footer>
 </div>
