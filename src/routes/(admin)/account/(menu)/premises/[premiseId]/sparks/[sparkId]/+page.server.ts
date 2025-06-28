@@ -1,3 +1,5 @@
+// src/routes/(admin)/account/(menu)/premises/[premiseId]/sparks/[sparkId]/+page.server.ts
+
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 
@@ -9,30 +11,33 @@ export const load: PageServerLoad = async ({
     redirect(303, "/login")
   }
 
-  const { sparkId } = params
-
-  if (!sparkId) {
-    // This case should ideally not be hit if the route is set up correctly
-    return fail(400, { error: "Spark ID is required." })
+  // --- FIX 1: Parse the ID and validate it ---
+  const numericSparkId = parseInt(params.sparkId, 10)
+  if (isNaN(numericSparkId)) {
+    return fail(400, { error: "Invalid Spark ID format." })
   }
 
   const { data: spark, error } = await supabase
     .from("story_sparks")
     .select("*")
-    .eq("id", sparkId)
+    .eq("id", numericSparkId) // Use the numeric ID
     .eq("user_id", user.id)
     .single()
 
   if (error) {
+    // This could happen if the row doesn't exist, which .single() treats as an error
+    if (error.code === "PGRST116") {
+      return fail(404, {
+        error: "Story spark not found or you don't have access.",
+      })
+    }
     console.error("Error loading story spark:", error)
     return fail(500, {
       error: "Failed to load story spark. Please try again later.",
     })
   }
 
-  if (!spark) {
-    return fail(404, { error: "Story spark not found." })
-  }
+  // Note: .single() guarantees `spark` is not null if no error, so no `!spark` check is needed.
 
   return { spark }
 }
@@ -43,9 +48,10 @@ export const actions: Actions = {
       return fail(401, { error: "Unauthorized" })
     }
 
-    const { sparkId } = params
-    if (!sparkId) {
-      return fail(400, { error: "Spark ID is required." })
+    // --- FIX 2: Parse the ID in the action as well ---
+    const numericSparkId = parseInt(params.sparkId, 10)
+    if (isNaN(numericSparkId)) {
+      return fail(400, { error: "Invalid Spark ID provided." })
     }
 
     const formData = await request.formData()
@@ -62,10 +68,11 @@ export const actions: Actions = {
     const thematic_premise = formData.get("thematic_premise") as string
     const story_roadmap = formData.getAll("story_roadmap") as string[]
 
-    const { error } = await supabase
+    const { data: updatedSpark, error } = await supabase
       .from("story_sparks")
       .update({
-        title: [title],
+        // Ensure title is not an empty string inside the array
+        title: title ? [title] : [],
         logline,
         comparisons,
         hero_name,
@@ -75,14 +82,16 @@ export const actions: Actions = {
         thematic_premise,
         story_roadmap,
       })
-      .eq("id", sparkId)
+      .eq("id", numericSparkId) // Use the numeric ID
       .eq("user_id", user.id)
+      .select()
+      .single()
 
     if (error) {
       console.error("Error updating story spark:", error)
       return fail(500, { error: "Failed to update story spark." })
     }
 
-    return { success: true }
+    return { success: true, spark: updatedSpark }
   },
 }

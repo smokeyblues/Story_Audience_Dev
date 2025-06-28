@@ -1,179 +1,189 @@
 <script lang="ts">
-  import type { ActionData, PageData } from "./$types"
   import { enhance } from "$app/forms"
+  import type { PageData, ActionData } from "./$types"
+  import { onMount } from "svelte"
+  import { page } from "$app/stores" // Import the page store to check for load errors
 
-  let { data, form }: { data: PageData; form: ActionData } = $props()
+  export let data: PageData
+  export let form: ActionData
 
-  // Use a reactive state variable for the spark data to allow editing
-  let spark = $state(JSON.parse(JSON.stringify(data.spark)))
+  // Reactive state derived from props
+  $: spark = form?.spark ?? data.spark
 
-  let isSaving = $state(false)
-  let saveError = $state<string | null>(null)
-  let saveSuccess = $state(false)
+  let isSaving = false
+  let showSuccessMessage = false
+  let successMessageTimeout: number
 
-  // Effect to handle form submission results
-  $effect(() => {
-    if (form) {
-      isSaving = false
-      if (form.success) {
-        saveSuccess = true
-        saveError = null
-        // Optionally reset form state after a delay
-        setTimeout(() => (saveSuccess = false), 3000)
-      } else if (form.error) {
-        saveError = form.error
-        saveSuccess = false
-      }
-    }
+  $: if (form?.success) {
+    showSuccessMessage = true
+    clearTimeout(successMessageTimeout)
+    successMessageTimeout = window.setTimeout(() => {
+      showSuccessMessage = false
+    }, 3000)
+  }
+
+  onMount(() => {
+    return () => clearTimeout(successMessageTimeout)
   })
 </script>
 
-<div class="container mx-auto p-4">
+<svelte:head>
+  <title>Edit Story Spark</title>
+</svelte:head>
+
+<div class="container mx-auto p-4 md:p-8">
   <h1 class="text-3xl font-bold mb-6">Edit Story Spark</h1>
 
+  <!-- FIX 3: Corrected conditional rendering logic -->
   {#if spark}
     <form
       method="POST"
       action="?/updateSpark"
       use:enhance={() => {
         isSaving = true
-        saveSuccess = false
-        saveError = null
-        return async () => {
-          // This will be handled by the $effect on `form`
+        showSuccessMessage = false
+
+        return async ({ update, result }) => {
+          // Prevent the form from being reset automatically,
+          // and rely on the data returned from the action.
+          if (result.type === "success") {
+            await update({ reset: false })
+          } else {
+            // For other cases, just update
+            await update()
+          }
+
+          isSaving = false
         }
       }}
+      class="space-y-6"
     >
-      <div class="space-y-6">
-        <!-- Title -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Title</h3>
-            <input
-              type="text"
-              name="title"
-              class="input input-bordered w-full"
-              bind:value={spark.title[0]}
-            />
-          </div>
-        </div>
+      <!-- Title -->
+      <div>
+        <label for="title" class="block font-semibold mb-1">Title</label>
+        <input
+          type="text"
+          id="title"
+          name="title"
+          class="input input-bordered w-full"
+          value={spark.title[0] ?? ""}
+          required
+        />
+      </div>
 
-        <!-- Logline -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Logline</h3>
+      <!-- Logline -->
+      <div>
+        <label for="logline" class="block font-semibold mb-1">Logline</label>
+        <textarea
+          id="logline"
+          name="logline"
+          class="textarea textarea-bordered w-full"
+          rows="3"
+          required>{spark.logline}</textarea
+        >
+      </div>
+
+      <!-- Other fields follow the same pattern... -->
+      <div>
+        <label for="comparisons" class="block font-semibold mb-1"
+          >Comparisons</label
+        >
+        <input
+          type="text"
+          id="comparisons"
+          name="comparisons"
+          class="input input-bordered w-full"
+          value={spark.comparisons}
+          required
+        />
+      </div>
+
+      <h2 class="text-2xl font-bold pt-4 border-t mt-8">Hero Profile</h2>
+      <div>
+        <label for="hero_name" class="block font-semibold mb-1">Name</label>
+        <input
+          type="text"
+          id="hero_name"
+          name="hero_name"
+          class="input input-bordered w-full"
+          value={spark.hero_name}
+          required
+        />
+      </div>
+      <div>
+        <label for="hero_description" class="block font-semibold mb-1"
+          >Description</label
+        >
+        <textarea
+          id="hero_description"
+          name="hero_description"
+          class="textarea textarea-bordered w-full"
+          rows="3"
+          required>{spark.hero_description}</textarea
+        >
+      </div>
+      <div>
+        <label for="hero_save_the_cat_moment" class="block font-semibold mb-1"
+          >Save the Cat Moment</label
+        >
+        <textarea
+          id="hero_save_the_cat_moment"
+          name="hero_save_the_cat_moment"
+          class="textarea textarea-bordered w-full"
+          rows="3"
+          required>{spark.hero_save_the_cat_moment}</textarea
+        >
+      </div>
+
+      <h2 class="text-2xl font-bold pt-4 border-t mt-8">Core Story Elements</h2>
+      <div>
+        <label for="story_engine" class="block font-semibold mb-1"
+          >Story Engine</label
+        >
+        <textarea
+          id="story_engine"
+          name="story_engine"
+          class="textarea textarea-bordered w-full"
+          rows="4"
+          required>{spark.story_engine}</textarea
+        >
+      </div>
+      <div>
+        <label for="thematic_premise" class="block font-semibold mb-1"
+          >Thematic Premise</label
+        >
+        <textarea
+          id="thematic_premise"
+          name="thematic_premise"
+          class="textarea textarea-bordered w-full"
+          rows="3"
+          required>{spark.thematic_premise}</textarea
+        >
+      </div>
+
+      <h2 class="text-2xl font-bold pt-4 border-t mt-8">Story Roadmap</h2>
+      <div class="space-y-4">
+        {#each spark.story_roadmap as step, i}
+          <div>
+            <label for="roadmap-step-{i + 1}" class="block font-semibold mb-1"
+              >Step {i + 1}</label
+            >
             <textarea
-              name="logline"
+              id="roadmap-step-{i + 1}"
+              name="story_roadmap"
               class="textarea textarea-bordered w-full"
-              bind:value={spark.logline}
-              rows={3}
-            ></textarea>
+              rows="3">{step}</textarea
+            >
           </div>
-        </div>
+        {/each}
+      </div>
 
-        <!-- Comparisons -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Comparisons</h3>
-            <input
-              type="text"
-              name="comparisons"
-              class="input input-bordered w-full"
-              bind:value={spark.comparisons}
-            />
-          </div>
-        </div>
-
-        <!-- Hero Profile -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Hero Profile</h3>
-            <div class="form-control">
-              <label class="label" for="heroName">
-                <span class="label-text">Name</span>
-              </label>
-              <input
-                id="heroName"
-                type="text"
-                name="hero_name"
-                class="input input-bordered w-full"
-                bind:value={spark.hero_name}
-              />
-            </div>
-            <div class="form-control mt-4">
-              <label class="label" for="heroDescription">
-                <span class="label-text">Description</span>
-              </label>
-              <textarea
-                id="heroDescription"
-                name="hero_description"
-                class="textarea textarea-bordered w-full"
-                bind:value={spark.hero_description}
-                rows={4}
-              ></textarea>
-            </div>
-            <div class="form-control mt-4">
-              <label class="label" for="heroSaveTheCat">
-                <span class="label-text">Save the Cat Moment</span>
-              </label>
-              <textarea
-                id="heroSaveTheCat"
-                name="hero_save_the_cat_moment"
-                class="textarea textarea-bordered w-full"
-                bind:value={spark.hero_save_the_cat_moment}
-                rows={3}
-              ></textarea>
-            </div>
-          </div>
-        </div>
-
-        <!-- Story Engine -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Story Engine</h3>
-            <textarea
-              name="story_engine"
-              class="textarea textarea-bordered w-full"
-              bind:value={spark.story_engine}
-              rows={3}
-            ></textarea>
-          </div>
-        </div>
-
-        <!-- Thematic Premise -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Thematic Premise</h3>
-            <textarea
-              name="thematic_premise"
-              class="textarea textarea-bordered w-full"
-              bind:value={spark.thematic_premise}
-              rows={2}
-            ></textarea>
-          </div>
-        </div>
-
-        <!-- Story Roadmap -->
-        <div class="card bg-base-100 shadow-xl">
-          <div class="card-body">
-            <h3 class="card-title">Story Roadmap</h3>
-            <ol class="list-decimal space-y-2 pl-5">
-              <!-- eslint-disable-next-line @typescript-eslint/no-unused-vars -->
-              {#each spark.story_roadmap as _, i}
-                <li>
-                  <input
-                    type="text"
-                    name="story_roadmap"
-                    class="input input-bordered w-full"
-                    bind:value={spark.story_roadmap[i]}
-                  />
-                </li>
-              {/each}
-            </ol>
-          </div>
-        </div>
-
-        <button type="submit" class="btn btn-primary mt-4" disabled={isSaving}>
+      <div class="flex items-center gap-4 pt-4">
+        <button
+          type="submit"
+          class="bg-green-500 hover:bg-green-400 text-white font-bold py-2 px-4 border-b-4 border-green-700 hover:border-green-500 rounded"
+          disabled={isSaving}
+        >
           {#if isSaving}
             <span class="loading loading-spinner"></span>
             Saving...
@@ -181,21 +191,29 @@
             Save Changes
           {/if}
         </button>
+
+        <!-- Feedback for ACTION failures (this part is correct) -->
+        {#if form?.error}
+          <div class="alert alert-error">
+            <span>Error: {form.error}</span>
+          </div>
+        {/if}
+
+        {#if showSuccessMessage}
+          <div class="alert alert-success">
+            <span>Story Spark saved successfully!</span>
+          </div>
+        {/if}
       </div>
     </form>
-
-    {#if saveError}
-      <div class="alert alert-error mt-4">
-        <span>{saveError}</span>
-      </div>
-    {/if}
-
-    {#if saveSuccess}
-      <div class="alert alert-success mt-4">
-        <span>Story Spark saved successfully!</span>
-      </div>
-    {/if}
   {:else}
-    <p>Loading story spark...</p>
+    <!-- This block now correctly handles cases where `load` failed -->
+    <div class="alert alert-error">
+      <!-- $page.error contains the object from fail() in `load` -->
+      <p>
+        {$page.error?.message ??
+          "Could not load the story spark. It may not exist or an error occurred."}
+      </p>
+    </div>
   {/if}
 </div>
