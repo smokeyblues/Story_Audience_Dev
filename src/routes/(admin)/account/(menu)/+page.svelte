@@ -14,8 +14,8 @@
 </svelte:head>
 
 <h1 class="text-2xl font-bold mb-1">Dashboard</h1>
-<div class="alert alert-error max-w-lg mt-2">
-  <svg
+<div class="max-w-lg mt-2">
+  <!-- <svg
     xmlns="http://www.w3.org/2000/svg"
     class="stroke-current shrink-0 h-6 w-6"
     fill="none"
@@ -26,19 +26,19 @@
       stroke-width="2"
       d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
     /></svg
-  >
+  > -->
   <div>
     <div class="font-bold">
       <!-- Demo Content, Bitches -->
-      <div class="text-sm">
+      <div class="text-lg">
         Welcome, {data.profile?.full_name ?? data.user?.email ?? "User"}!
       </div>
     </div>
-    <div class="my-2">
+    <!-- <div class="my-2">
       This page currently serves as a provisional placeholder. Kindly supplant
       this content with the bespoke features and refined functionality of your
       application.
-    </div>
+    </div> -->
   </div>
 </div>
 
