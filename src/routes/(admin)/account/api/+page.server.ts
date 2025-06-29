@@ -245,19 +245,11 @@ export const actions = {
       validationError = `Name must be less than ${fieldMaxTextLength} characters`
       errorFields.push("fullName")
     }
-    if (!companyName) {
-      validationError =
-        "Company name is required. If this is a hobby project or personal app, please put your name."
-      errorFields.push("companyName")
-    } else if (companyName.length > fieldMaxTextLength) {
+    if (companyName.length > fieldMaxTextLength) {
       validationError = `Company name must be less than ${fieldMaxTextLength} characters`
       errorFields.push("companyName")
     }
-    if (!website) {
-      validationError =
-        "Company website is required. An app store URL is a good alternative if you don't have a website."
-      errorFields.push("website")
-    } else if (website.length > fieldMaxTextLength) {
+    if (website.length > fieldMaxTextLength) {
       validationError = `Company website must be less than ${fieldMaxTextLength} characters`
       errorFields.push("website")
     }

@@ -75,39 +75,19 @@
           />
         </div>
 
-        <div class="mt-4">
-          <label for="companyName">
-            <span class="text-l text-center">Company Name</span>
-          </label>
-          <input
-            id="companyName"
-            name="companyName"
-            type="text"
-            placeholder="Company name"
-            class="{fieldError(form, 'companyName')
-              ? 'input-error'
-              : ''} mt-1 input input-bordered w-full max-w-xs"
-            value={form?.companyName ?? companyName}
-            maxlength="50"
-          />
-        </div>
+        <input
+          id="companyName"
+          name="companyName"
+          type="hidden"
+          value={form?.companyName ?? companyName}
+        />
 
-        <div class="mt-4">
-          <label for="website">
-            <span class="text-l text-center">Company Website</span>
-          </label>
-          <input
-            id="website"
-            name="website"
-            type="text"
-            placeholder="Company website"
-            class="{fieldError(form, 'website')
-              ? 'input-error'
-              : ''} mt-1 input input-bordered w-full max-w-xs"
-            value={form?.website ?? website}
-            maxlength="50"
-          />
-        </div>
+        <input
+          id="website"
+          name="website"
+          type="hidden"
+          value={form?.website ?? website}
+        />
 
         {#if form?.errorMessage}
           <p class="text-red-700 text-sm font-bold text-center mt-3">
@@ -124,7 +104,7 @@
         </div>
       </form>
 
-      <div class="text-sm text-slate-800 mt-14">
+      <div class="text-sm mt-14">
         You are logged in as {user?.email}.
         <br />
         <a class="underline" href="/account/sign_out"> Sign out </a>
