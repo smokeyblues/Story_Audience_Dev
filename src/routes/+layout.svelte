@@ -1,13 +1,30 @@
 <script lang="ts">
   import "../app.css"
+  import posthog from "posthog-js"
+  import { browser } from "$app/environment"
+  import { onMount } from "svelte"
   import { navigating } from "$app/stores"
   import { expoOut } from "svelte/easing"
   import { slide } from "svelte/transition"
+  import type { LayoutData } from "./$types"
+
   interface Props {
+    data: LayoutData
     children?: import("svelte").Snippet
   }
 
   let { children }: Props = $props()
+  // let loggedIn = $derived(!!data.session?.user)
+
+  onMount(() => {
+    if (browser) {
+      posthog.init("phc_bzusV1hfMzSbTeMmMI5wAUCrIYbdN49hUZcPm8y9B7W", {
+        api_host: "https://us.i.posthog.com",
+        person_profiles: "always", // or 'always' to create profiles for anonymous users as well
+      })
+    }
+    return
+  })
 </script>
 
 {#if $navigating}

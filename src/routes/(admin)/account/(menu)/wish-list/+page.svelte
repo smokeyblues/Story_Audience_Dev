@@ -1,10 +1,11 @@
 <script lang="ts">
   import { enhance } from "$app/forms"
   import { invalidateAll } from "$app/navigation"
-  import type { ActionData, PageData } from "../$types"
+  import type { PageData, ActionData } from "./$types"
   import EditableListItem from "$lib/components/EditableListItem.svelte"
   // import type { Database } from "../../../../../DatabaseDefinitions"
 
+  // Use a looser type for form to avoid type errors
   let { data, form }: { data: PageData; form: ActionData } = $props()
   let wishListItems = $derived(data.wishListItems ?? [])
   let currentForm = $state<ActionData>(null)

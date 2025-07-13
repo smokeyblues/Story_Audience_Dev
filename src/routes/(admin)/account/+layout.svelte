@@ -105,6 +105,18 @@
         </a>
         <ul class="menu-nested indent-4">
           <li>
+            <a href="/account/teams">Teams</a>
+          </li>
+          <li>
+            <a href="/account/world-building">World Building</a>
+          </li>
+          <li>
+            <a href="/account/characters">Characters</a>
+          </li>
+          <li>
+            <a href="/account/story-building">Story Building</a>
+          </li>
+          <li>
             <a href="/account/wish-list">Wish List</a>
           </li>
           <li>
