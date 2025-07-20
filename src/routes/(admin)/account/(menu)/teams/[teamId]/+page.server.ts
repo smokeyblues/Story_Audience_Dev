@@ -347,7 +347,7 @@ export const actions: Actions = {
     }
 
     // Redirect to a safe page after deletion
-    redirect(303, "/dashboard")
+    redirect(303, "/account")
   },
 
   removeMember: async ({ request, locals: { supabase, session }, params }) => {

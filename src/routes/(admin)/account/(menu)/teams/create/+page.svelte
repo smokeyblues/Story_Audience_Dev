@@ -64,7 +64,7 @@
 
         <div class="card-actions justify-end mt-6">
           <a
-            href="/dashboard"
+            href="/account"
             class="btn btn-ghost"
             class:btn-disabled={submitting}>Cancel</a
           >
