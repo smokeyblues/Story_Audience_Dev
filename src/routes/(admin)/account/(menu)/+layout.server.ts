@@ -1,4 +1,4 @@
-// src/routes/(app)/+layout.server.ts
+// src/routes/(admin)/account/(menu)/+layout.server.ts
 import { redirect } from "@sveltejs/kit"
 import type { LayoutServerLoad } from "./$types"
 import type { TeamMembershipWithTeamDetails } from "$lib/types" // Define this custom type below

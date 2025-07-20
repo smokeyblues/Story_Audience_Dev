@@ -175,33 +175,36 @@ export type Database = {
       team_invitations: {
         Row: {
           created_at: string
+          expires_at: string
           id: string
+          invited_by_user_id: string
           invited_user_email: string
-          inviting_user_id: string | null
           role: Database["public"]["Enums"]["team_role"]
-          status: Database["public"]["Enums"]["invitation_status"]
+          status: string
           team_id: string
-          updated_at: string
+          token: string
         }
         Insert: {
           created_at?: string
+          expires_at?: string
           id?: string
+          invited_by_user_id: string
           invited_user_email: string
-          inviting_user_id?: string | null
           role?: Database["public"]["Enums"]["team_role"]
-          status?: Database["public"]["Enums"]["invitation_status"]
+          status?: string
           team_id: string
-          updated_at?: string
+          token: string
         }
         Update: {
           created_at?: string
+          expires_at?: string
           id?: string
+          invited_by_user_id?: string
           invited_user_email?: string
-          inviting_user_id?: string | null
           role?: Database["public"]["Enums"]["team_role"]
-          status?: Database["public"]["Enums"]["invitation_status"]
+          status?: string
           team_id?: string
-          updated_at?: string
+          token?: string
         }
         Relationships: [
           {
@@ -295,6 +298,18 @@ export type Database = {
       accept_team_invitation: {
         Args: { p_invitation_id: string }
         Returns: undefined
+      }
+      get_team_details_for_member: {
+        Args: { input_team_id: string }
+        Returns: {
+          id: string
+          name: string
+          owner_user_id: string
+        }[]
+      }
+      get_user_role_in_team: {
+        Args: { p_user_id: string; p_team_id: string }
+        Returns: Database["public"]["Enums"]["team_role"]
       }
       get_user_teams_with_details: {
         Args: Record<PropertyKey, never>
