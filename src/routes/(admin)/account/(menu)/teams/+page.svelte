@@ -13,18 +13,25 @@
         {#each data.user_teams_with_details as team_detail}
           <li class="p-4 border rounded-md">
             <div class="flex justify-between items-center">
-              <div>
-                <p class="font-bold">{team_detail.team_name}</p>
-                <p class="text-sm text-gray-500">
-                  Role: {team_detail.user_role}
-                </p>
-              </div>
+              <a
+                href="/account/teams/{team_detail.team_id}"
+                class="flex-grow hover:underline"
+              >
+                <div>
+                  <p class="font-bold">{team_detail.team_name}</p>
+                  <p class="text-sm text-gray-500">
+                    Role: {team_detail.user_role}
+                  </p>
+                </div>
+              </a>
               {#if team_detail.user_role === "owner"}
-                <div class="flex gap-2">
+                <div class="flex gap-2 flex-shrink-0">
                   <a
-                    href="/account/teams/{team_detail.team_id}"
-                    class="btn btn-sm">Edit</a
+                    href="/account/teams/{team_detail.team_id}/edit"
+                    class="btn btn-sm"
                   >
+                    Edit
+                  </a>
                   <form
                     method="POST"
                     action="?/deleteTeam"
