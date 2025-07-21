@@ -535,7 +535,11 @@ export const actions: Actions = {
     }
   },
 
-  inviteMember: async ({ request, locals: { supabase, session }, params }) => {
+  inviteMember: async ({
+    request,
+    locals: { supabase, supabaseServiceRole, session },
+    params,
+  }) => {
     const { teamId } = params
     const user = session?.user
     const formData = await request.formData()
@@ -605,7 +609,7 @@ export const actions: Actions = {
 
     // 6. Check if email belongs to an existing member of THIS team
     // First, find the user ID associated with the email, if any
-    const { data: profileData, error: profileError } = await supabase
+    const { data: profileData, error: profileError } = await supabaseServiceRole
       .from("profiles")
       .select("id")
       .eq("email", validatedEmail) // Assuming email is unique in profiles
