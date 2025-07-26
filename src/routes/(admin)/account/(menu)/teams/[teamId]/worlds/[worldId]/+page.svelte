@@ -248,8 +248,8 @@
   </section>
 
   <!-- Section for Listing Existing Elements -->
-  <section class="card">
-    <h2>Existing Elements</h2>
+  <section class="card p-4">
+    <h1 class="text-2xl font-bold">Existing Elements</h1>
     {#if data.elements && data.elements.length > 0}
       <ul class="space-y-3">
         {#each data.elements as element}
@@ -264,6 +264,25 @@
       </ul>
     {:else}
       <p>No elements have been created for this world yet.</p>
+    {/if}
+  </section>
+
+  <!-- Section for Listing Existing Relationships -->
+  <section class="card p-4 mt-4">
+    <h1 class="text-2xl font-bold">Relationships</h1>
+    {#if data.relationships && data.relationships.length > 0}
+      <ul class="space-y-3">
+        {#each data.relationships as relationship}
+          <li class="p-4 border rounded-md">
+            <p class="font-semibold text-lg">{relationship.type}</p>
+            <p class="text-sm text-surface-400">
+              {relationship.source_element_id} -> {relationship.target_element_id}
+            </p>
+          </li>
+        {/each}
+      </ul>
+    {:else}
+      <p>No relationships have been created for this world yet.</p>
     {/if}
   </section>
 </div>

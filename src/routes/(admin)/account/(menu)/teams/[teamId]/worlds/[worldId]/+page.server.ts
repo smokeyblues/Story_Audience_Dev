@@ -1,6 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
-import type { Json } from "../../../../../../../../DatabaseDefinitions"
+import type { Json, Tables } from "../../../../../../../../DatabaseDefinitions"
 
 export const load: PageServerLoad = async ({
   locals: { supabase, user },
@@ -34,9 +34,26 @@ export const load: PageServerLoad = async ({
     return fail(500, { error: "Failed to load world elements." })
   }
 
+  const elementIds = elements?.map((e) => e.id) || []
+  let relationships: Tables<"relationships">[] = []
+
+  if (elementIds.length > 0) {
+    const { data: rels, error: relsError } = await supabase
+      .from("relationships")
+      .select("*")
+      .in("source_element_id", elementIds)
+
+    if (relsError) {
+      console.error("Error fetching relationships:", relsError)
+    } else if (rels) {
+      relationships = rels
+    }
+  }
+
   return {
     world,
     elements: elements ?? [],
+    relationships,
   }
 }
 
