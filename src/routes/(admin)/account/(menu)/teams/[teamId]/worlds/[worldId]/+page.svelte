@@ -1,197 +1,269 @@
-<!-- src/routes/(admin)/account/(menu)/teams/[teamId]/worlds/[worldId]/+page.svelte -->
 <script lang="ts">
   import { enhance } from "$app/forms"
-  import { invalidateAll } from "$app/navigation"
   import type { ActionData, PageData } from "./$types"
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const props = $props<{ data: PageData; form: ActionData }>()
-  let world = $derived(props.data.world)
-  let elements = $derived(props.data.elements)
+  export let data: PageData
+  export let form: ActionData
 
-  let editingWorld = $state(false)
-  let worldName = $state("")
-  let worldDescription = $state("")
+  // --- Configuration for Element Types and their Properties ---
+  // This object defines the structure of your worldbuilding elements.
+  // It's used to dynamically generate the "Add Element" form.
+  const elementTypes = {
+    "Core Entities": [
+      {
+        name: "Character",
+        fields: [
+          { name: "summary", label: "Summary", type: "textarea" },
+          { name: "backstory", label: "Backstory", type: "textarea" },
+          { name: "age", label: "Age", type: "text" },
+        ],
+      },
+      {
+        name: "Location",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "region", label: "Region", type: "text" },
+        ],
+      },
+      {
+        name: "Item",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "function", label: "Function", type: "text" },
+          { name: "owner", label: "Owner", type: "text" },
+        ],
+      },
+      {
+        name: "Species/Race",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "abilities", label: "Abilities", type: "textarea" },
+        ],
+      },
+      {
+        name: "Creature",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "habitat", label: "Habitat", type: "text" },
+        ],
+      },
+    ],
+    "Social & Political": [
+      {
+        name: "Faction",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "goals", label: "Goals", type: "textarea" },
+          { name: "leader", label: "Leader", type: "text" },
+        ],
+      },
+      {
+        name: "Culture",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "customs", label: "Customs", type: "textarea" },
+        ],
+      },
+      {
+        name: "Government",
+        fields: [
+          { name: "type", label: "Type of Government", type: "text" },
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+      {
+        name: "Religion/Mythology",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "deities", label: "Deities", type: "textarea" },
+        ],
+      },
+    ],
+    "Narrative & Abstract": [
+      {
+        name: "Event",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "date", label: "Date", type: "text" },
+          { name: "participants", label: "Participants", type: "textarea" },
+        ],
+      },
+      {
+        name: "Lore Entry",
+        fields: [{ name: "text", label: "Lore Text", type: "textarea" }],
+      },
+      {
+        name: "Theme",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+      {
+        name: "Plot Point",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+    ],
+    "Systems & Rules": [
+      {
+        name: "Magic System / Technology",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "rules", label: "Rules & Limitations", type: "textarea" },
+        ],
+      },
+      {
+        name: "Language",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+          { name: "alphabet", label: "Alphabet/Symbols", type: "textarea" },
+        ],
+      },
+      {
+        name: "Calendar/Time",
+        fields: [
+          { name: "description", label: "Description", type: "textarea" },
+        ],
+      },
+    ],
+  }
 
-  let currentForm = $state<ActionData>(null)
+  // --- Component State ---
+  let selectedType = "" // The currently selected element type from the dropdown
+  let elementName = "" // The name of the new element
+  let properties: { [key: string]: string } = {} // Holds the data for the dynamic fields
 
-  $effect(() => {
-    currentForm = props.form
-    if (props.form?.success) {
-      if (props.form.action === "updateWorld") {
-        editingWorld = false
+  // Reactive statement: This code runs whenever `selectedType` changes.
+  $: {
+    // Reset properties when the type changes
+    properties = {}
+    if (selectedType) {
+      const allTypes = Object.values(elementTypes).flat()
+      const typeConfig = allTypes.find((t) => t.name === selectedType)
+      if (typeConfig) {
+        // Initialize the properties object with empty strings for the new fields
+        typeConfig.fields.forEach((field) => {
+          properties[field.name] = ""
+        })
       }
-      invalidateAll()
-      const timer = setTimeout(() => {
-        currentForm = null
-      }, 3000)
-      return () => clearTimeout(timer)
-    }
-  })
-
-  function startEditing() {
-    if (world) {
-      worldName = world.name
-      worldDescription = world.description ?? ""
-      editingWorld = true
     }
   }
 
-  function confirmDelete(event: SubmitEvent) {
-    if (
-      !world ||
-      !window.confirm(
-        `Are you sure you want to delete the world "${world.name}"? This action is permanent.`,
-      )
-    ) {
-      event.preventDefault()
-    }
-  }
+  // Helper to get the fields for the currently selected type
+  $: currentFields = selectedType
+    ? (Object.values(elementTypes)
+        .flat()
+        .find((t) => t.name === selectedType)?.fields ?? [])
+    : []
 </script>
 
-<svelte:head>
-  <title>World: {world?.name ?? "Loading..."}</title>
-</svelte:head>
+<div class="container">
+  <h1>World: {data.world?.name}</h1>
 
-{#if world}
-  <section class="space-y-6">
-    {#if editingWorld}
-      <form
-        method="POST"
-        action="?/updateWorld"
-        use:enhance
-        class="p-4 border rounded-lg bg-base-200"
-      >
-        <div class="form-control">
-          <label for="name" class="label">
-            <span class="label-text">World Name</span>
-          </label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            bind:value={worldName}
-            class="input input-bordered"
-          />
-        </div>
-        <div class="form-control mt-2">
-          <label for="description" class="label">
-            <span class="label-text">Description</span>
-          </label>
-          <textarea
-            id="description"
-            name="description"
-            bind:value={worldDescription}
-            class="textarea textarea-bordered"
-            rows="3"
-          ></textarea>
-        </div>
-        <div class="mt-4 space-x-2">
-          <button type="submit" class="btn btn-primary">Save Changes</button>
-          <button
-            type="button"
-            class="btn btn-ghost"
-            onclick={() => (editingWorld = false)}>Cancel</button
-          >
-        </div>
-        {#if currentForm?.action === "updateWorld" && currentForm?.error}
-          <p class="text-error text-sm mt-2">{currentForm.error}</p>
-        {/if}
-      </form>
-    {:else}
-      <div class="flex justify-between items-start">
-        <div>
-          <h2 class="text-3xl font-bold">{world.name}</h2>
-          <p class="mt-2 text-lg text-gray-600">
-            {world.description || "No description provided."}
-          </p>
-        </div>
-        <div class="flex space-x-2">
-          <button class="btn btn-sm btn-outline" onclick={startEditing}
-            >Edit</button
-          >
-          <form
-            method="POST"
-            action="?/deleteWorld"
-            use:enhance
-            onsubmit={confirmDelete}
-          >
-            <button type="submit" class="btn btn-sm btn-error btn-outline"
-              >Delete</button
-            >
-          </form>
-        </div>
+  <!-- Section for Adding New Elements -->
+  <section class="card">
+    <h2>Add New Element</h2>
+    <form method="POST" action="?/createElement" use:enhance class="space-y-4">
+      <!-- Element Name Input -->
+      <div>
+        <label for="name">Element Name</label>
+        <input
+          type="text"
+          name="name"
+          id="name"
+          class="input"
+          bind:value={elementName}
+          required
+        />
       </div>
+
+      <!-- Element Type Selection -->
+      <div>
+        <label for="type">Element Type</label>
+        <select
+          name="type"
+          id="type"
+          class="input"
+          bind:value={selectedType}
+          required
+        >
+          <option value="" disabled>Select a type...</option>
+          {#each Object.entries(elementTypes) as [category, types]}
+            <optgroup label={category}>
+              {#each types as type}
+                <option value={type.name}>{type.name}</option>
+              {/each}
+            </optgroup>
+          {/each}
+        </select>
+      </div>
+
+      <!-- Dynamic Properties Section -->
+      {#if selectedType}
+        <div class="pt-4 border-t space-y-4">
+          <h3>{selectedType} Properties</h3>
+          {#each currentFields as field}
+            <div>
+              <label for="prop_{field.name}">{field.label}</label>
+              {#if field.type === "textarea"}
+                <textarea
+                  name="prop_{field.name}"
+                  id="prop_{field.name}"
+                  rows="3"
+                  class="input"
+                  bind:value={properties[field.name]}
+                ></textarea>
+              {:else}
+                <input
+                  type={field.type}
+                  name="prop_{field.name}"
+                  id="prop_{field.name}"
+                  class="input"
+                  bind:value={properties[field.name]}
+                />
+              {/if}
+            </div>
+          {/each}
+        </div>
+      {/if}
+
+      <!-- Submission Button -->
+      <div>
+        <button
+          type="submit"
+          class="btn"
+          disabled={!selectedType || !elementName}
+        >
+          Create Element
+        </button>
+      </div>
+    </form>
+    {#if form?.error}
+      <p class="error-message">{form.error}</p>
+    {/if}
+    {#if form?.success}
+      <p class="success-message">Element created successfully!</p>
     {/if}
   </section>
 
-  <div class="divider my-8"></div>
-
-  <section class="space-y-4">
-    <h3 class="text-2xl font-semibold">Elements</h3>
-
-    <form
-      method="POST"
-      action="?/addElement"
-      use:enhance
-      class="p-4 border rounded-lg bg-base-200"
-    >
-      <div class="flex items-end space-x-4">
-        <div class="form-control grow">
-          <label for="element-name" class="label">
-            <span class="label-text">New Element Name</span>
-          </label>
-          <input
-            type="text"
-            id="element-name"
-            name="name"
-            class="input input-bordered w-full"
-            required
-          />
-        </div>
-        <div class="form-control">
-          <label for="element-type" class="label">
-            <span class="label-text">Type</span>
-          </label>
-          <input
-            type="text"
-            id="element-type"
-            name="type"
-            class="input input-bordered"
-            required
-          />
-        </div>
-        <button type="submit" class="btn btn-secondary">Add Element</button>
-      </div>
-      {#if currentForm?.action === "addElement" && currentForm?.error}
-        <p class="text-error text-sm mt-2">{currentForm.error}</p>
-      {/if}
-      {#if currentForm?.action === "addElement" && currentForm?.success}
-        <p class="text-success text-sm mt-2">{currentForm.message}</p>
-      {/if}
-    </form>
-
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-6">
-      {#if elements && elements.length > 0}
-        {#each elements as element (element.id)}
-          <div class="card bg-base-100 shadow-md">
-            <div class="card-body">
-              <h4 class="card-title">{element.name}</h4>
-              <p
-                class="text-sm font-mono bg-gray-200 px-2 py-1 rounded inline-block"
-              >
-                {element.type}
-              </p>
+  <!-- Section for Listing Existing Elements -->
+  <section class="card">
+    <h2>Existing Elements</h2>
+    {#if data.elements && data.elements.length > 0}
+      <ul class="space-y-3">
+        {#each data.elements as element}
+          <li class="p-4 border rounded-md flex justify-between items-center">
+            <div>
+              <p class="font-semibold text-lg">{element.name}</p>
+              <p class="text-sm text-surface-400">{element.type}</p>
             </div>
-          </div>
+            <!-- Future actions like 'View Details' or 'Delete' can go here -->
+          </li>
         {/each}
-      {:else}
-        <p>No elements have been added to this world yet.</p>
-      {/if}
-    </div>
+      </ul>
+    {:else}
+      <p>No elements have been created for this world yet.</p>
+    {/if}
   </section>
-{:else}
-  <p class="text-center text-lg mt-8">
-    World not found or you do not have access.
-  </p>
-{/if}
+</div>

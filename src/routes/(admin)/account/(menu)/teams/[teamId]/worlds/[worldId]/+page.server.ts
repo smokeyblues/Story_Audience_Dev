@@ -1,5 +1,6 @@
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
+import type { Json } from "../../../../../../../../DatabaseDefinitions"
 
 export const load: PageServerLoad = async ({
   locals: { supabase, user },
@@ -104,44 +105,40 @@ export const actions: Actions = {
     redirect(303, `/account/teams/${params.teamId}/worlds`)
   },
 
-  addElement: async ({ request, locals: { supabase, user }, params }) => {
-    if (!user) {
-      return fail(401, { action: "addElement", error: "Unauthorized" })
-    }
-
+  // NEW, UPDATED VERSION
+  createElement: async ({ request, locals: { supabase }, params }) => {
     const formData = await request.formData()
-    const name = formData.get("name")?.toString()?.trim()
-    const type = formData.get("type")?.toString()?.trim()
+    const name = formData.get("name") as string
+    const type = formData.get("type") as string
+    const worldId = params.worldId
+
+    // --- New logic to handle dynamic properties ---
+    const properties: { [key: string]: Json } = {}
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("prop_")) {
+        const propName = key.substring(5) // Remove the 'prop_' prefix
+        if (typeof value === "string") {
+          properties[propName] = value
+        }
+      }
+    }
+    // --- End of new logic ---
 
     if (!name || !type) {
-      return fail(400, {
-        action: "addElement",
-        name,
-        type,
-        error: "Element name and type cannot be empty.",
-      })
+      return fail(400, { error: "Name and type are required." })
     }
 
-    const { error: insertError } = await supabase.from("elements").insert({
+    const { error } = await supabase.from("elements").insert({
       name,
       type,
-      world_id: params.worldId,
+      world_id: worldId,
+      properties, // Add the new properties object here
     })
 
-    if (insertError) {
-      console.error("Error adding element:", insertError)
-      return fail(500, {
-        action: "addElement",
-        name,
-        type,
-        error: "Database error while adding element.",
-      })
+    if (error) {
+      return fail(500, { error: "Server error. Please try again." })
     }
 
-    return {
-      action: "addElement",
-      success: true,
-      message: "Element added successfully.",
-    }
+    return { success: true }
   },
 }
