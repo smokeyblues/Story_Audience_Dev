@@ -93,7 +93,9 @@
     <ul>
       <li><a href="/dashboard">Dashboard</a></li>
       {#if data.team}
-        <li><a href="/teams/{data.team.team_id}">{data.team.team_name}</a></li>
+        <li>
+          <a href="/account/teams/{data.team.team_id}">{data.team.team_name}</a>
+        </li>
       {/if}
     </ul>
   </div>
@@ -102,6 +104,10 @@
       <div class="flex justify-between items-center">
         {#if !editingName}
           <h1 class="text-3xl font-bold">Team: {data.team.team_name}</h1>
+          <a
+            href="/account/teams/{data.team.team_id}/worlds"
+            class="btn btn-sm btn-outline-secondary ml-4">View Worlds</a
+          >
         {:else}
           <form
             method="POST"

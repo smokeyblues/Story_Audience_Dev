@@ -108,7 +108,7 @@
             <a href="/account/teams">Teams</a>
           </li>
           <li>
-            <a href="/account/world-building">World Building</a>
+            <a href="/account/teams/worlds">Worlds</a>
           </li>
           <li>
             <a href="/account/characters">Characters</a>

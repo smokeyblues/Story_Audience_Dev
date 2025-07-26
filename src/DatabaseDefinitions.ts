@@ -47,6 +47,44 @@ export type Database = {
         }
         Relationships: []
       }
+      elements: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          properties: Json | null
+          type: string
+          updated_at: string
+          world_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          properties?: Json | null
+          type: string
+          updated_at?: string
+          world_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          properties?: Json | null
+          type?: string
+          updated_at?: string
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "elements_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: false
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       premises: {
         Row: {
           created_at: string
@@ -72,6 +110,7 @@ export type Database = {
         Row: {
           avatar_url: string | null
           company_name: string | null
+          email: string | null
           full_name: string | null
           id: string
           unsubscribed: boolean
@@ -81,6 +120,7 @@ export type Database = {
         Insert: {
           avatar_url?: string | null
           company_name?: string | null
+          email?: string | null
           full_name?: string | null
           id: string
           unsubscribed?: boolean
@@ -90,6 +130,7 @@ export type Database = {
         Update: {
           avatar_url?: string | null
           company_name?: string | null
+          email?: string | null
           full_name?: string | null
           id?: string
           unsubscribed?: boolean
@@ -97,6 +138,51 @@ export type Database = {
           website?: string | null
         }
         Relationships: []
+      }
+      relationships: {
+        Row: {
+          created_at: string
+          id: string
+          properties: Json | null
+          source_element_id: string
+          target_element_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          properties?: Json | null
+          source_element_id: string
+          target_element_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          properties?: Json | null
+          source_element_id?: string
+          target_element_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "relationships_source_element_id_fkey"
+            columns: ["source_element_id"]
+            isOneToOne: false
+            referencedRelation: "elements"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "relationships_target_element_id_fkey"
+            columns: ["target_element_id"]
+            isOneToOne: false
+            referencedRelation: "elements"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       story_sparks: {
         Row: {
@@ -174,6 +260,8 @@ export type Database = {
       }
       team_invitations: {
         Row: {
+          accepted_at: string | null
+          accepted_by_user_id: string | null
           created_at: string
           expires_at: string
           id: string
@@ -185,6 +273,8 @@ export type Database = {
           token: string
         }
         Insert: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
@@ -196,6 +286,8 @@ export type Database = {
           token: string
         }
         Update: {
+          accepted_at?: string | null
+          accepted_by_user_id?: string | null
           created_at?: string
           expires_at?: string
           id?: string
@@ -290,6 +382,41 @@ export type Database = {
         }
         Relationships: []
       }
+      worlds: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          team_id: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          team_id: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          team_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "worlds_team_id_fkey"
+            columns: ["team_id"]
+            isOneToOne: false
+            referencedRelation: "teams"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -319,6 +446,10 @@ export type Database = {
           user_role: Database["public"]["Enums"]["team_role"]
           owner_id: string
         }[]
+      }
+      is_team_member: {
+        Args: { team_id_to_check: string }
+        Returns: boolean
       }
     }
     Enums: {
