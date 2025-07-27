@@ -1,7 +1,6 @@
 // src/routes/(admin)/account/(menu)/teams/[teamId]/worlds/[worldId]/elements/[elementId]/+page.server.ts
 import { error, fail } from "@sveltejs/kit"
 import type { PageServerLoad, Actions } from "./$types"
-// import type { Json } from "../../../../../../../../../../DatabaseDefinitions"
 
 export const load: PageServerLoad = async ({
   params,
