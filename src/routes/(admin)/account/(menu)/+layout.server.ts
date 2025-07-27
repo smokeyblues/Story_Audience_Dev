@@ -52,36 +52,64 @@ export const load: LayoutServerLoad = async ({
     redirect(303, createProfilePath)
   }
 
-  // Fetch the teams the user is a member of using the RPC function
+  // Fetch the teams the user is a member of, along with their worlds
   const { data: userTeamsData, error: rpcError } = await supabase.rpc(
     "get_user_teams_with_details",
-  ) // Call the function
+  )
 
   if (rpcError) {
     console.error("Error fetching user's teams via RPC:", rpcError)
-    // Handle error appropriately
+    // Handle error appropriately, maybe return an empty array or show an error
   }
 
-  // Structure the data to match the expected 'TeamMembershipWithTeamDetails' type
-  // The function returns rows like { role, team_id, team_name, team_owner_user_id }
-  const userTeams =
-    userTeamsData?.map((row) => ({
-      role: row.user_role,
-      teams: {
-        // Nest the team details
-        id: row.team_id,
-        name: row.team_name,
-        owner_user_id: row.owner_id,
-      },
-    })) ?? []
+  // An array to hold the fully processed team data including worlds
+  let userTeams: TeamMembershipWithTeamDetails[] = []
+
+  if (userTeamsData) {
+    // Fetch all worlds for all teams the user is a member of in a single query
+    const teamIds = userTeamsData.map((row) => row.team_id)
+    const { data: worldsData, error: worldsError } = await supabase
+      .from("worlds")
+      .select("id, team_id")
+      .in("team_id", teamIds)
+
+    if (worldsError) {
+      console.error("Error fetching worlds for teams:", worldsError)
+      // Decide how to handle this - maybe teams will just have empty worlds arrays
+    }
+
+    // Map worlds to their team_id for efficient lookup
+    const worldsByTeamId = new Map<string, { id: string }[]>()
+    if (worldsData) {
+      for (const world of worldsData) {
+        if (!worldsByTeamId.has(world.team_id)) {
+          worldsByTeamId.set(world.team_id, [])
+        }
+        worldsByTeamId.get(world.team_id)?.push({ id: world.id })
+      }
+    }
+
+    // Now, structure the final userTeams array
+    userTeams =
+      userTeamsData.map((row) => ({
+        role: row.user_role,
+        teams: {
+          id: row.team_id,
+          name: row.team_name,
+          owner_user_id: row.owner_id,
+          // Assign the fetched worlds, or an empty array if none
+          worlds: worldsByTeamId.get(row.team_id) ?? [],
+        },
+      })) ?? []
+  }
 
   return {
     session,
     profile,
     user,
     amr: aal?.currentAuthenticationMethods,
-    // Ensure the final structure matches 'TeamMembershipWithTeamDetails[]'
-    userTeams: userTeams as TeamMembershipWithTeamDetails[],
+    // This now correctly includes the 'worlds' property
+    userTeams,
   }
 }
 

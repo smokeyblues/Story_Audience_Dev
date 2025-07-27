@@ -137,10 +137,21 @@
               <h3 class="card-title">{teamMembership.teams.name}</h3>
               <p>Your role: {teamMembership.role}</p>
               <div class="card-actions justify-end">
-                <a
-                  href="/worlds/create?teamId={teamMembership.teams.id}"
-                  class="btn btn-secondary btn-sm">Create World</a
-                >
+                {#if teamMembership.teams.worlds && teamMembership.teams.worlds.length > 0}
+                  <!-- Team has one or more worlds, link to the first one -->
+                  <a
+                    href="/account/teams/{teamMembership.teams
+                      .id}/worlds/{teamMembership.teams.worlds[0].id}"
+                    class="btn btn-primary btn-sm">View World</a
+                  >
+                {:else}
+                  <!-- Team has no worlds, link to create one -->
+                  <a
+                    href="/account/teams/{teamMembership.teams
+                      .id}/worlds/create"
+                    class="btn btn-secondary btn-sm">Create World</a
+                  >
+                {/if}
                 <a
                   href="/account/teams/{teamMembership.teams.id}"
                   class="btn btn-ghost btn-sm">View Team</a

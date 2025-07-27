@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms"
   import type { ActionData, PageData } from "./$types"
+  import { page } from "$app/stores"
 
   export let data: PageData
   export let form: ActionData
@@ -254,10 +255,15 @@
       <ul class="space-y-3">
         {#each data.elements as element}
           <li class="p-4 border rounded-md flex justify-between items-center">
-            <div>
-              <p class="font-semibold text-lg">{element.name}</p>
-              <p class="text-sm text-surface-400">{element.type}</p>
-            </div>
+            <a
+              href={`/account/teams/${$page.params.teamId}/worlds/${$page.params.worldId}/elements/${element.id}`}
+              class="block w-full"
+            >
+              <div>
+                <p class="font-semibold text-lg">{element.name}</p>
+                <p class="text-sm text-surface-400">{element.type}</p>
+              </div>
+            </a>
             <!-- Future actions like 'View Details' or 'Delete' can go here -->
           </li>
         {/each}

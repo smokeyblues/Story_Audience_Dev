@@ -9,6 +9,7 @@ export type TeamMembershipWithTeamDetails = {
     id: string
     name: string
     owner_user_id: string | null
+    worlds: { id: string }[] // Add a worlds property to the team
   } | null // Allow null in case of OUTER JOIN or unexpected results, though INNER is default
 }
 
