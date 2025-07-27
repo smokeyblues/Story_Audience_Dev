@@ -50,10 +50,22 @@ export const load: PageServerLoad = async ({
     }
   }
 
+  // Create a map of element IDs to names for easy lookup
+  const elementMap = new Map(elements?.map((e) => [e.id, e.name]))
+
+  // Augment relationships with source and target element names
+  const populatedRelationships = relationships.map((rel) => ({
+    ...rel,
+    source_element_name:
+      elementMap.get(rel.source_element_id) ?? "Unknown Element",
+    target_element_name:
+      elementMap.get(rel.target_element_id) ?? "Unknown Element",
+  }))
+
   return {
     world,
     elements: elements ?? [],
-    relationships,
+    relationships: populatedRelationships,
   }
 }
 

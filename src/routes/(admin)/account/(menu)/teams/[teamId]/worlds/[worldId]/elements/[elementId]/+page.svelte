@@ -8,6 +8,56 @@
   export let form: ActionData
 
   let isEditing = false
+  let selectedTargetId = ""
+  let relationshipDescription = ""
+  let availableRelationshipTypes: string[] = []
+
+  // --- NEW: Relationship Ontology ---
+  // This object defines the valid relationships between different element types.
+  // Format: { SourceType: { TargetType: ['RELATIONSHIP_1', 'RELATIONSHIP_2'] } }
+  const relationshipOntology: Record<string, Record<string, string[]>> = {
+    Character: {
+      Character: [
+        "ALLY_OF",
+        "ENEMY_OF",
+        "PARENT_OF",
+        "CHILD_OF",
+        "SIBLING_OF",
+        "SPOUSE_OF",
+      ],
+      Location: ["LIVES_IN", "BORN_IN", "DIED_IN", "VISITED"],
+      Item: ["OWNS", "WIELDS", "CREATED"],
+      Faction: ["MEMBER_OF", "LEADS", "FOUNDED"],
+      Event: ["PARTICIPATED_IN"],
+      Culture: ["BELONGS_TO"],
+    },
+    Location: {
+      Location: ["LOCATED_IN", "CONTAINS"],
+      Faction: ["HEADQUARTERS_OF", "TERRITORY_OF"],
+      Event: ["SITE_OF"],
+      Culture: ["HEARTLAND_OF"],
+    },
+    Item: {
+      Character: ["OWNED_BY", "CREATED_BY"],
+      Location: ["LOCATED_AT", "FORGED_AT"],
+      Faction: ["SYMBOL_OF"],
+    },
+    Faction: {
+      Character: ["LED_BY", "FOUNDED_BY"],
+      Location: ["BASED_IN"],
+      Faction: ["ALLIED_WITH", "AT_WAR_WITH"],
+    },
+    Event: {
+      Character: ["INVOLVED"],
+      Location: ["TOOK_PLACE_AT"],
+      Faction: ["PARTICIPANT"],
+    },
+    Culture: {
+      Character: ["PRACTICED_BY"],
+      Location: ["ORIGINATED_IN"],
+    },
+    // Add more rules for other types as needed
+  }
 
   // --- Configuration for Element Types and their Properties ---
   const elementTypes = {
@@ -147,6 +197,26 @@
   $: if (form?.success) {
     isEditing = false
   }
+
+  // --- NEW: Reactive logic to update the relationship types dropdown ---
+  $: {
+    if (selectedTargetId) {
+      const sourceType = data.element.type
+      const targetElement = data.worldElements.find(
+        (el) => el.id === selectedTargetId,
+      )
+      if (sourceType && targetElement && targetElement.type) {
+        const targetType = targetElement.type
+        // Look up the valid relationships in our ontology
+        availableRelationshipTypes =
+          relationshipOntology[sourceType]?.[targetType] || []
+      } else {
+        availableRelationshipTypes = []
+      }
+    } else {
+      availableRelationshipTypes = []
+    }
+  }
 </script>
 
 <div class="container space-y-6">
@@ -194,7 +264,6 @@
         <!-- Dynamic Properties Section -->
         <div class="pt-4 border-t space-y-4">
           {#each currentFields as field}
-            <!-- TYPE ERROR FIX: Combined the object check and value access -->
             {@const value =
               typeof data.element.properties === "object" &&
               data.element.properties !== null &&
@@ -230,7 +299,7 @@
         {#if form?.error}
           <p class="error-message">{form.error}</p>
         {/if}
-        {#if form?.success}
+        {#if form?.success && form.message === "Element updated successfully!"}
           <p class="success-message">{form.message}</p>
         {/if}
       </form>
@@ -260,7 +329,6 @@
     <ul class="space-y-3">
       {#if data.relationships.length > 0}
         {#each data.relationships as rel}
-          <!-- TYPE ERROR FIX: Added 'id' to the check for source and target -->
           {#if rel.source && typeof rel.source === "object" && "id" in rel.source && "name" in rel.source && rel.target && typeof rel.target === "object" && "id" in rel.target && "name" in rel.target}
             {@const isSource = rel.source.id === data.element.id}
             <li class="flex items-center space-x-2">
@@ -276,5 +344,73 @@
         <p>This element has no relationships yet.</p>
       {/if}
     </ul>
+
+    <!-- --- MODIFIED: Add Relationship Form --- -->
+    <div class="mt-6 pt-6 border-t">
+      <h3>Add New Relationship</h3>
+      <form
+        method="POST"
+        action="?/createRelationship"
+        use:enhance
+        class="flex items-end space-x-2"
+      >
+        <!-- This element is the Source -->
+        <div class="flex-1">
+          <label for="targetElementId">Connect To</label>
+          <select
+            name="targetElementId"
+            id="targetElementId"
+            class="input"
+            required
+            bind:value={selectedTargetId}
+          >
+            <option value="" disabled>Select an element...</option>
+            {#each data.worldElements.filter((el) => el.id !== data.element.id) as targetElement}
+              <option value={targetElement.id}
+                >{targetElement.name} ({targetElement.type})</option
+              >
+            {/each}
+          </select>
+        </div>
+
+        <!-- Relationship Type Dropdown (now dynamic) -->
+        <div class="flex-1">
+          <label for="relationshipType">As</label>
+          <select
+            name="relationshipType"
+            id="relationshipType"
+            class="input"
+            required
+            disabled={availableRelationshipTypes.length === 0}
+          >
+            <option value="" disabled selected>Select a relationship...</option>
+            {#each availableRelationshipTypes as relType}
+              <option value={relType}>{relType.replace(/_/g, " ")}</option>
+            {/each}
+          </select>
+        </div>
+
+        <!-- NEW: Description Textarea -->
+        <div class="pt-4">
+          <label for="relationshipDescription">Description (Optional)</label>
+          <textarea
+            id="relationshipDescription"
+            name="relationshipDescription"
+            bind:value={relationshipDescription}
+            rows="3"
+            class="input"
+            placeholder="How or why are these elements related?"
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn variant-filled-primary">Add</button>
+      </form>
+      {#if form?.createRelationshipError}
+        <p class="error-message mt-2">{form.createRelationshipError}</p>
+      {/if}
+      {#if form?.success && form.message === "Relationship created!"}
+        <p class="success-message mt-2">{form.message}</p>
+      {/if}
+    </div>
   </div>
 </div>

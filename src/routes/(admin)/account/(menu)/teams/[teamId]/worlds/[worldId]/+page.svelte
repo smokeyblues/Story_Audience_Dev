@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms"
   import type { ActionData, PageData } from "./$types"
   import { page } from "$app/stores"
+  import type { RelationshipProperties } from "$lib/types"
 
   export let data: PageData
   export let form: ActionData
@@ -280,10 +281,21 @@
       <ul class="space-y-3">
         {#each data.relationships as relationship}
           <li class="p-4 border rounded-md">
-            <p class="font-semibold text-lg">{relationship.type}</p>
-            <p class="text-sm text-surface-400">
-              {relationship.source_element_id} -> {relationship.target_element_id}
+            <p class="text-lg">
+              <span class="font-semibold"
+                >{relationship.source_element_name}</span
+              >
+              <span class="text-surface-500"> — {relationship.type} — </span>
+              <span class="font-semibold"
+                >{relationship.target_element_name}</span
+              >
             </p>
+            {#if (relationship.properties as RelationshipProperties)?.description}
+              <p class="text-sm text-surface-400 pt-1">
+                {(relationship.properties as RelationshipProperties)
+                  .description}
+              </p>
+            {/if}
           </li>
         {/each}
       </ul>

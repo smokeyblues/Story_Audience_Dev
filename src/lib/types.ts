@@ -36,3 +36,7 @@ export type DashboardProject = {
     name: string
   } | null
 }
+
+export type RelationshipProperties = {
+  description?: string
+}
