@@ -3,18 +3,70 @@
   import { enhance } from "$app/forms"
   import type { PageData, ActionData } from "./$types"
   import { page } from "$app/stores"
+  import RelationshipGraph from "$lib/components/RelationshipGraph.svelte"
 
   export let data: PageData
   export let form: ActionData
 
   let isEditing = false
   let selectedTargetId = ""
-  let relationshipDescription = ""
   let availableRelationshipTypes: string[] = []
 
-  // --- NEW: Relationship Ontology ---
-  // This object defines the valid relationships between different element types.
-  // Format: { SourceType: { TargetType: ['RELATIONSHIP_1', 'RELATIONSHIP_2'] } }
+  // --- NEW: Prepare data for the D3 graph ---
+  $: graphData = (() => {
+    const nodes = new Map<string, { id: string; name: string; type: string }>()
+    // Add the current element as the first node
+    nodes.set(data.element.id, {
+      id: data.element.id,
+      name: data.element.name,
+      type: data.element.type,
+    })
+
+    const links = data.relationships
+      .map((rel) => {
+        // Ensure the relationship has valid source and target objects
+        if (
+          rel.source &&
+          typeof rel.source === "object" &&
+          "id" in rel.source &&
+          "name" in rel.source &&
+          rel.target &&
+          typeof rel.target === "object" &&
+          "id" in rel.target &&
+          "name" in rel.target
+        ) {
+          // Add the source and target to our nodes map (Map handles duplicates)
+          nodes.set(rel.source.id as string, {
+            id: rel.source.id as string,
+            name: rel.source.name as string,
+            type: "",
+          }) // Type isn't needed for the graph node itself
+          nodes.set(rel.target.id as string, {
+            id: rel.target.id as string,
+            name: rel.target.name as string,
+            type: "",
+          })
+
+          return {
+            source: rel.source.id as string,
+            target: rel.target.id as string,
+            type: rel.type || "",
+          }
+        }
+        return null
+      })
+      .filter(
+        (link): link is { source: string; target: string; type: string } =>
+          link !== null,
+      )
+
+    return {
+      nodes: Array.from(nodes.values()),
+      links,
+    }
+  })()
+
+  // --- Relationship Ontology ---
   const relationshipOntology: Record<string, Record<string, string[]>> = {
     Character: {
       Character: [
@@ -56,7 +108,6 @@
       Character: ["PRACTICED_BY"],
       Location: ["ORIGINATED_IN"],
     },
-    // Add more rules for other types as needed
   }
 
   // --- Configuration for Element Types and their Properties ---
@@ -181,24 +232,20 @@
     ],
   }
 
-  // Helper to get the fields for the current element's type
   $: currentFields =
     Object.values(elementTypes)
       .flat()
       .find((t) => t.name === data.element.type)?.fields ?? []
 
-  // Helper to format property keys for display
   function formatKey(key: string) {
     const result = key.replace(/([A-Z])/g, " $1")
     return result.charAt(0).toUpperCase() + result.slice(1)
   }
 
-  // When form submission is done, exit editing mode
   $: if (form?.success) {
     isEditing = false
   }
 
-  // --- NEW: Reactive logic to update the relationship types dropdown ---
   $: {
     if (selectedTargetId) {
       const sourceType = data.element.type
@@ -207,7 +254,6 @@
       )
       if (sourceType && targetElement && targetElement.type) {
         const targetType = targetElement.type
-        // Look up the valid relationships in our ontology
         availableRelationshipTypes =
           relationshipOntology[sourceType]?.[targetType] || []
       } else {
@@ -237,8 +283,21 @@
     </button>
   </div>
 
+  <!-- NEW: Relationship Graph Visualization -->
+  {#if graphData.nodes.length > 1}
+    <div class="card">
+      <h2>Relationship Web</h2>
+      <RelationshipGraph
+        nodes={graphData.nodes}
+        links={graphData.links}
+        currentElementId={data.element.id}
+      />
+    </div>
+  {/if}
+
   <!-- Element Properties Card -->
   <div class="card">
+    <!-- ... (rest of the component is the same as before) ... -->
     {#if isEditing}
       <!-- EDITING MODE -->
       <form
@@ -248,7 +307,6 @@
         class="space-y-4"
       >
         <h2>Edit Properties</h2>
-        <!-- Element Name Input -->
         <div>
           <label for="name">Element Name</label>
           <input
@@ -260,8 +318,6 @@
             required
           />
         </div>
-
-        <!-- Dynamic Properties Section -->
         <div class="pt-4 border-t space-y-4">
           {#each currentFields as field}
             {@const value =
@@ -291,8 +347,6 @@
             </div>
           {/each}
         </div>
-
-        <!-- Submission Button -->
         <div>
           <button type="submit" class="btn variant-filled">Save Changes</button>
         </div>
@@ -345,7 +399,6 @@
       {/if}
     </ul>
 
-    <!-- --- MODIFIED: Add Relationship Form --- -->
     <div class="mt-6 pt-6 border-t">
       <h3>Add New Relationship</h3>
       <form
@@ -354,7 +407,6 @@
         use:enhance
         class="flex items-end space-x-2"
       >
-        <!-- This element is the Source -->
         <div class="flex-1">
           <label for="targetElementId">Connect To</label>
           <select
@@ -373,7 +425,6 @@
           </select>
         </div>
 
-        <!-- Relationship Type Dropdown (now dynamic) -->
         <div class="flex-1">
           <label for="relationshipType">As</label>
           <select
@@ -388,19 +439,6 @@
               <option value={relType}>{relType.replace(/_/g, " ")}</option>
             {/each}
           </select>
-        </div>
-
-        <!-- NEW: Description Textarea -->
-        <div class="pt-4">
-          <label for="relationshipDescription">Description (Optional)</label>
-          <textarea
-            id="relationshipDescription"
-            name="relationshipDescription"
-            bind:value={relationshipDescription}
-            rows="3"
-            class="input"
-            placeholder="How or why are these elements related?"
-          ></textarea>
         </div>
 
         <button type="submit" class="btn variant-filled-primary">Add</button>
