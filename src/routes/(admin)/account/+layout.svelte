@@ -108,10 +108,47 @@
             <a href="/account/teams">Teams</a>
           </li>
           <li>
-            <a href="/account/teams/worlds">Worlds</a>
-          </li>
-          <li>
-            <a href="/account/characters">Characters</a>
+            <details>
+              <summary>Worlds</summary>
+              <ul>
+                <li>
+                  <a href="/account/teams/worlds">All Worlds</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/characters">Characters</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/locations">Locations</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/events">Events</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/items">Items</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/factions">Factions</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/cultures">Cultures</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/species">Species</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/magic-system">Magic System</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/technology">Technology</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/languages">Languages</a>
+                </li>
+                <li>
+                  <a href="/account/teams/worlds/history">History & Lore</a>
+                </li>
+              </ul>
+            </details>
           </li>
           <li>
             <a href="/account/story-building">Story Building</a>
