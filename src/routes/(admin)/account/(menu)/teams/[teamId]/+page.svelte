@@ -409,6 +409,10 @@
             required
           >
             <option value="member">Member</option>
+            <option value="writer">Writer</option>
+            <option value="canon-editor">Canon Editor</option>
+            <option value="story-lead">Story Lead</option>
+            <option value="world-architect">World Architect</option>
             <option value="admin">Admin</option>
           </select>
         </div>
