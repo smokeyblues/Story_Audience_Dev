@@ -734,6 +734,7 @@ export const actions: Actions = {
           token: invitationToken,
           teamName: teamData.name,
           inviterName: inviterName,
+          assignedRole: validatedRole,
         },
       },
     )

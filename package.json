@@ -56,6 +56,7 @@
     "@thisux/sveltednd": "^0.0.20",
     "d3": "^7.9.0",
     "handlebars": "^4.7.8",
+    "lucide-svelte": "^0.536.0",
     "posthog-js": "^1.257.0",
     "resend": "^3.5.0",
     "stripe": "^13.3.0",

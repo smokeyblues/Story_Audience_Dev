@@ -5,7 +5,38 @@
   import { page } from "$app/stores"
   import RelationshipGraph from "$lib/components/RelationshipGraph.svelte"
 
-  export let data: PageData
+  // Explicitly define the types for our data
+  type ElementStub = {
+    id: string
+    name: string
+    type: string
+  }
+
+  type Relationship = {
+    id: string
+    type: string | null
+    source: ElementStub | null
+    target: ElementStub | null
+  }
+
+  // Type guard function to ensure relationship has valid source and target
+  function isValidRelationship(rel: Relationship): rel is Relationship & {
+    source: ElementStub
+    target: ElementStub
+  } {
+    return (
+      rel.source !== null &&
+      typeof rel.source === "object" &&
+      "id" in rel.source &&
+      "name" in rel.source &&
+      rel.target !== null &&
+      typeof rel.target === "object" &&
+      "id" in rel.target &&
+      "name" in rel.target
+    )
+  }
+
+  export let data: PageData & { relationships: Relationship[] }
   export let form: ActionData
 
   let isEditing = false
@@ -24,32 +55,23 @@
 
     const links = data.relationships
       .map((rel) => {
-        // Ensure the relationship has valid source and target objects
-        if (
-          rel.source &&
-          typeof rel.source === "object" &&
-          "id" in rel.source &&
-          "name" in rel.source &&
-          rel.target &&
-          typeof rel.target === "object" &&
-          "id" in rel.target &&
-          "name" in rel.target
-        ) {
+        // Use type guard function to ensure relationship has valid source and target objects
+        if (isValidRelationship(rel)) {
           // Add the source and target to our nodes map (Map handles duplicates)
-          nodes.set(rel.source.id as string, {
-            id: rel.source.id as string,
-            name: rel.source.name as string,
+          nodes.set(rel.source.id, {
+            id: rel.source.id,
+            name: rel.source.name,
             type: "",
           }) // Type isn't needed for the graph node itself
-          nodes.set(rel.target.id as string, {
-            id: rel.target.id as string,
-            name: rel.target.name as string,
+          nodes.set(rel.target.id, {
+            id: rel.target.id,
+            name: rel.target.name,
             type: "",
           })
 
           return {
-            source: rel.source.id as string,
-            target: rel.target.id as string,
+            source: rel.source.id,
+            target: rel.target.id,
             type: rel.type || "",
           }
         }
@@ -383,7 +405,7 @@
     <ul class="space-y-3">
       {#if data.relationships.length > 0}
         {#each data.relationships as rel}
-          {#if rel.source && typeof rel.source === "object" && "id" in rel.source && "name" in rel.source && rel.target && typeof rel.target === "object" && "id" in rel.target && "name" in rel.target}
+          {#if isValidRelationship(rel)}
             {@const isSource = rel.source.id === data.element.id}
             <li class="flex items-center space-x-2">
               <span class:font-bold={isSource}>{rel.source.name}</span>

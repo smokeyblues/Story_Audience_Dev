@@ -28,8 +28,10 @@ export const load: PageServerLoad = async ({
       `
             id,
             type,
-            source:source_element_id ( id, name ),
-            target:target_element_id ( id, name )
+            source_element_id,
+            target_element_id,
+            source:elements!relationships_source_element_id_fkey ( id, name, type ),
+            target:elements!relationships_target_element_id_fkey ( id, name, type )
         `,
     )
     .or(`source_element_id.eq.${elementId},target_element_id.eq.${elementId}`)
