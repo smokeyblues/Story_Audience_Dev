@@ -163,6 +163,9 @@
                 <li>
                   <a href="/account/premises">Premises</a>
                 </li>
+                <li>
+                  <a href="/account/story-sparks">Story Sparks</a>
+                </li>
               </ul>
             </details>
           </li>
