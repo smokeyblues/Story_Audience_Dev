@@ -151,13 +151,32 @@
             </details>
           </li>
           <li>
-            <a href="/account/story-building">Story Building</a>
+            <details>
+              <summary>Story Development</summary>
+              <ul>
+                <li>
+                  <a href="/account/story-building">Story Building</a>
+                </li>
+                <li>
+                  <a href="/account/wish-list">Wish List</a>
+                </li>
+                <li>
+                  <a href="/account/premises">Premises</a>
+                </li>
+              </ul>
+            </details>
           </li>
           <li>
-            <a href="/account/wish-list">Wish List</a>
-          </li>
-          <li>
-            <a href="/account/premises">Premises</a>
+            <details>
+              <summary>Transmedia Dev</summary>
+              <ul>
+                <li>Treatment (TBD)</li>
+                <li>Business & Marketing (TBD)</li>
+                <li>Design Specs (TBD)</li>
+                <li>Functional Specs (TBD)</li>
+                <li>Tech Specs (TBD)</li>
+              </ul>
+            </details>
           </li>
         </ul>
       </li>
