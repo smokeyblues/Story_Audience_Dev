@@ -4,21 +4,20 @@ import type { Database } from "../../../../../../../DatabaseDefinitions"
 
 // Define the shape of the data returned by the load function.
 // This helps with type safety in the Svelte component.
-export type CharacterElement = Database["public"]["Tables"]["elements"]["Row"]
+export type LocationElement = Database["public"]["Tables"]["elements"]["Row"]
 
-export type WorldWithCharacters =
+export type WorldWithLocations =
   Database["public"]["Tables"]["worlds"]["Row"] & {
-    elements: CharacterElement[]
+    elements: LocationElement[]
   }
 
-export type TeamWithCharacters =
-  Database["public"]["Tables"]["teams"]["Row"] & {
-    worlds: WorldWithCharacters[]
-  }
+export type TeamWithLocations = Database["public"]["Tables"]["teams"]["Row"] & {
+  worlds: WorldWithLocations[]
+}
 
 /**
- * Loads all characters for all teams and worlds associated with the current user.
- * The data is structured as a nested array of teams, worlds, and characters.
+ * Loads all locations for all teams and worlds associated with the current user.
+ * The data is structured as a nested array of teams, worlds, and locations.
  */
 export const load: PageServerLoad = async ({
   locals: { supabase, safeGetSession },
@@ -43,9 +42,9 @@ export const load: PageServerLoad = async ({
     throw error(500, "An error occurred while fetching your teams.")
   }
 
-  // If the user isn't part of any teams, there are no characters to show.
+  // If the user isn't part of any teams, there are no locations to show.
   if (!teamMembers || teamMembers.length === 0) {
-    return { teamsWithCharacters: [] as TeamWithCharacters[] }
+    return { teamsWithLocations: [] as TeamWithLocations[] }
   }
 
   const teamIds = teamMembers.map((tm) => tm.team_id)
@@ -77,39 +76,39 @@ export const load: PageServerLoad = async ({
     throw error(500, "An error occurred while fetching teams and worlds.")
   }
 
-  // 3. Separately fetch character elements for all worlds
+  // 3. Separately fetch location elements for all worlds
   const worldIds = (teamsData || [])
     .flatMap((team) => team.worlds || [])
     .map((world) => world.id)
 
-  let characterElements: CharacterElement[] = []
+  let locationElements: LocationElement[] = []
   if (worldIds.length > 0) {
     const { data: elementsData, error: elementsError } = await supabase
       .from("elements")
       .select("*")
       .in("world_id", worldIds)
-      .eq("type", "Character")
+      .eq("type", "Location")
 
     if (elementsError) {
-      console.error("Error fetching character elements:", elementsError)
-      throw error(500, "An error occurred while fetching character elements.")
+      console.error("Error fetching location elements:", elementsError)
+      throw error(500, "An error occurred while fetching location elements.")
     }
 
-    characterElements = elementsData || []
+    locationElements = elementsData || []
   }
 
-  // 4. Combine the data - always include all teams/worlds, with their character elements
-  const teamsWithCharacters: TeamWithCharacters[] = (teamsData || []).map(
+  // 4. Combine the data - always include all teams/worlds, with their location elements
+  const teamsWithLocations: TeamWithLocations[] = (teamsData || []).map(
     (team) => ({
       ...team,
       worlds: (team.worlds || []).map((world) => ({
         ...world,
-        elements: characterElements.filter(
+        elements: locationElements.filter(
           (element) => element.world_id === world.id,
         ),
       })),
     }),
   )
 
-  return { teamsWithCharacters }
+  return { teamsWithLocations }
 }

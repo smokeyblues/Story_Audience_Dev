@@ -16,10 +16,9 @@
 
   {#if teamsWithCharacters.length === 0}
     <div class="text-center py-12">
-      <p class="text-lg">No characters found.</p>
+      <p class="text-lg">No teams found.</p>
       <p class="mt-2 text-neutral-content">
-        Get started by navigating to a world and creating a new character
-        element.
+        You need to be a member of a team to create characters.
       </p>
       <a href="/account/teams" class="btn btn-primary mt-4">Go to Teams</a>
     </div>
@@ -32,38 +31,73 @@
           {team.name}
         </h2>
 
-        <!-- Iterate over each world within a team -->
-        {#each team.worlds as world}
-          <div class="mb-6 pl-4">
-            <h3 class="text-lg font-medium mb-4">
-              <span class="text-neutral-content">World:</span>
-              {world.name}
-            </h3>
-            <div
-              class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+        {#if team.worlds.length === 0}
+          <div class="pl-4 py-6 text-center bg-base-100 rounded-lg">
+            <p class="text-neutral-content">No worlds in this team yet.</p>
+            <a
+              href="/account/teams/{team.id}"
+              class="btn btn-sm btn-outline mt-2"
             >
-              <!-- Iterate over each character in the world and display it as a card -->
-              {#each world.elements as character}
-                <a
-                  href={`/account/teams/${team.id}/worlds/${world.id}/elements/${character.id}`}
-                  class="card card-compact bg-base-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
-                >
-                  <div class="card-body">
-                    <h4 class="card-title">{character.name}</h4>
-                    <p class="text-sm text-neutral-content truncate">
-                      {(typeof character.properties === "object" &&
-                        character.properties !== null &&
-                        !Array.isArray(character.properties) &&
-                        (character.properties.summary ||
-                          character.properties.description)) ||
-                        "No description available."}
-                    </p>
-                  </div>
-                </a>
-              {/each}
-            </div>
+              Manage Team
+            </a>
           </div>
-        {/each}
+        {:else}
+          <!-- Iterate over each world within a team -->
+          {#each team.worlds as world}
+            <div class="mb-6 pl-4">
+              <div class="flex justify-between items-center mb-4">
+                <h3 class="text-lg font-medium">
+                  <span class="text-neutral-content">World:</span>
+                  {world.name}
+                </h3>
+                <a
+                  href="/account/teams/{team.id}/worlds/{world.id}/elements/Character/create"
+                  class="btn btn-sm btn-primary"
+                >
+                  Create Character
+                </a>
+              </div>
+
+              {#if world.elements.length === 0}
+                <div class="bg-base-100 rounded-lg p-6 text-center">
+                  <p class="text-neutral-content mb-3">
+                    No characters in this world yet.
+                  </p>
+                  <a
+                    href="/account/teams/{team.id}/worlds/{world.id}/elements/Character/create"
+                    class="btn btn-sm btn-primary"
+                  >
+                    Create Your First Character
+                  </a>
+                </div>
+              {:else}
+                <div
+                  class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4"
+                >
+                  <!-- Iterate over each character in the world and display it as a card -->
+                  {#each world.elements as character}
+                    <a
+                      href={`/account/teams/${team.id}/worlds/${world.id}/elements/${character.id}`}
+                      class="card card-compact bg-base-200 shadow-md hover:shadow-lg hover:-translate-y-1 transition-all duration-200"
+                    >
+                      <div class="card-body">
+                        <h4 class="card-title">{character.name}</h4>
+                        <p class="text-sm text-neutral-content truncate">
+                          {(typeof character.properties === "object" &&
+                            character.properties !== null &&
+                            !Array.isArray(character.properties) &&
+                            (character.properties.summary ||
+                              character.properties.description)) ||
+                            "No description available."}
+                        </p>
+                      </div>
+                    </a>
+                  {/each}
+                </div>
+              {/if}
+            </div>
+          {/each}
+        {/if}
       </div>
     {/each}
   {/if}
