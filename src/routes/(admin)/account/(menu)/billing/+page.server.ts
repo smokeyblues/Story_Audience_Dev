@@ -46,8 +46,10 @@ export const load: PageServerLoad = async ({
       errorMessage,
       stack: errorStack,
     })
+
+    // Temporary: Show actual error to help debug
     error(500, {
-      message: "Unknown error. If issue persists, please contact us.",
+      message: `DEBUG: ${errorMessage} | Type: ${typeof fetchErr} | Customer: ${customerId}`,
     })
   }
 
