@@ -1,19 +1,23 @@
 <script lang="ts">
   import { onMount } from "svelte"
   import "leaflet/dist/leaflet.css"
-  // Import the full Leaflet library and the specific Map type
   import L, { type Map as LeafletMap } from "leaflet"
 
   let mapContainer: HTMLElement
-  // Use the specific LeafletMap type instead of 'any'
   let map: LeafletMap
 
-  onMount(async () => {
-    // Manually set the paths for the default marker icons.
+  onMount(() => {
+    // --- The Fix for the TypeScript Error ---
+    // We are intentionally ignoring this line for TypeScript.
+    // This is a known workaround for a Leaflet issue in bundler environments.
+    // @ts-expect-error - This is a known workaround for a Leaflet issue in bundler environments.
+    delete L.Icon.Default.prototype._getIconUrl
+    // --- End of Fix ---
+
     L.Icon.Default.mergeOptions({
-      iconRetinaUrl: "marker-icon-2x.png",
-      iconUrl: "marker-icon.png",
-      shadowUrl: "marker-shadow.png",
+      iconRetinaUrl: "/images/marker-icon-2x.png",
+      iconUrl: "/images/marker-icon.png",
+      shadowUrl: "/images/marker-shadow.png",
     })
 
     if (map) {
