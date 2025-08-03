@@ -3,7 +3,6 @@ import {
   fetchSubscription,
   getOrCreateCustomerId,
 } from "../../subscription_helpers.server"
-import { diagnoseStripe } from "./diagnose_stripe"
 import type { PageServerLoad } from "./$types"
 
 export const load: PageServerLoad = async ({
@@ -25,9 +24,6 @@ export const load: PageServerLoad = async ({
     })
   }
 
-  // Temporary diagnostic - remove after debugging
-  await diagnoseStripe(customerId)
-
   const {
     primarySubscription,
     hasEverHadSubscription,
@@ -36,20 +32,9 @@ export const load: PageServerLoad = async ({
     customerId,
   })
   if (fetchErr) {
-    const errorMessage =
-      fetchErr instanceof Error ? fetchErr.message : String(fetchErr)
-    const errorStack = fetchErr instanceof Error ? fetchErr.stack : undefined
-    console.error("Error fetching subscription - Full details:", {
-      error: fetchErr,
-      customerId: customerId,
-      errorType: typeof fetchErr,
-      errorMessage,
-      stack: errorStack,
-    })
-
-    // Temporary: Show actual error to help debug
+    console.error("Error fetching subscription", fetchErr)
     error(500, {
-      message: `DEBUG: ${errorMessage} | Type: ${typeof fetchErr} | Customer: ${customerId}`,
+      message: "Unknown error. If issue persists, please contact us.",
     })
   }
 

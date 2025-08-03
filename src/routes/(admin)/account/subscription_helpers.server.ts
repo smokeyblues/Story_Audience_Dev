@@ -88,14 +88,6 @@ export const fetchSubscription = async ({
       status: "all",
     })
   } catch (e) {
-    const errorMessage = e instanceof Error ? e.message : String(e)
-    const errorStack = e instanceof Error ? e.stack : undefined
-    console.error("Stripe subscriptions.list failed:", {
-      error: e,
-      customerId,
-      errorMessage,
-      stack: errorStack,
-    })
     return { error: e }
   }
 
@@ -115,15 +107,6 @@ export const fetchSubscription = async ({
       return x.stripe_product_id === productId
     })
     if (!appSubscription) {
-      console.error("Product ID mismatch error:", {
-        stripeProductId: productId,
-        availableProductIds: pricingPlans.map((p) => ({
-          id: p.id,
-          stripe_product_id: p.stripe_product_id,
-        })),
-        customerId,
-        subscriptionId: primaryStripeSubscription.id,
-      })
       return {
         error:
           "Stripe subscription does not have matching app subscription in pricing_plans.ts (via product id match)",
