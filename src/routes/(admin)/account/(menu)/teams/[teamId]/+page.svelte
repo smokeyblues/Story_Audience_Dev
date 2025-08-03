@@ -106,7 +106,7 @@
           <h1 class="text-3xl font-bold">Team: {data.team.team_name}</h1>
           <a
             href="/account/teams/{data.team.team_id}/worlds"
-            class="btn btn-sm btn-outline-secondary ml-4">View Worlds</a
+            class="btn btn-sm btn-outline-secondary ml-4">View World</a
           >
         {:else}
           <form

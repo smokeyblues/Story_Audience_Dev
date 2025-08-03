@@ -26,9 +26,11 @@
 </svelte:head>
 
 <section>
-  <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Worlds</h2>
+  <h2 class="text-2xl font-semibold mb-4 border-b pb-2">
+    {data.worlds?.[0]?.name || "No World"}
+  </h2>
 
-  {#if userRole && ["owner", "admin"].includes(userRole)}
+  {#if userRole && ["owner", "admin"].includes(userRole) && !data.worlds?.[0]?.name}
     <form method="POST" action="?/addWorld" use:enhance class="mb-6">
       <div class="form-control">
         <label for="name" class="label">
