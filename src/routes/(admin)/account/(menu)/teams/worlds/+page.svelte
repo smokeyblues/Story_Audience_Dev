@@ -7,11 +7,11 @@
 </script>
 
 <svelte:head>
-  <title>Your Teams' Worlds</title>
+  <title>Your Teams' World</title>
 </svelte:head>
 
 <section>
-  <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Your Teams' Worlds</h2>
+  <h2 class="text-2xl font-semibold mb-6 border-b pb-2">Your Teams' World</h2>
 
   {#if teamsWithWorlds.length > 0}
     <div class="space-y-8">

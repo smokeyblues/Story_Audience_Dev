@@ -3,11 +3,11 @@
   import { enhance } from "$app/forms"
   import type { ActionData, PageData } from "./$types"
 
-  const props = $props<{ data: PageData; form: ActionData }>()
+  const { form } = $props<{ data: PageData; form: ActionData }>()
   let currentForm = $state<ActionData>(null)
 
   $effect(() => {
-    currentForm = props.form
+    currentForm = form
   })
 </script>
 

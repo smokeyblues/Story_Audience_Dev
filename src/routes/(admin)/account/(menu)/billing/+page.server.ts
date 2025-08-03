@@ -41,6 +41,6 @@ export const load: PageServerLoad = async ({
   return {
     isActiveCustomer: !!primarySubscription,
     hasEverHadSubscription,
-    currentPlanId: primarySubscription?.appSubscription?.id,
+    currentPlanId: primarySubscription?.appSubscription?.id ?? "creative",
   }
 }
