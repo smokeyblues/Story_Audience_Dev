@@ -25,6 +25,7 @@
     "@types/glob": "^8.1.0",
     "@types/html-to-text": "^9.0.4",
     "@types/jsdom": "^21.1.7",
+    "@types/leaflet": "^1.9.20",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
     "@typescript-eslint/parser": "^6.19.0",
     "daisyui": "^5.0.0",
@@ -58,10 +59,12 @@
     "@xyflow/svelte": "^1.2.2",
     "d3": "^7.9.0",
     "handlebars": "^4.7.8",
+    "leaflet": "^1.9.4",
     "lucide-svelte": "^0.536.0",
     "posthog-js": "^1.257.0",
     "resend": "^3.5.0",
     "stripe": "^13.3.0",
+    "svelte-leafletjs": "^2.0.0",
     "svelte-meta-tags": "^4.4.0"
   },
   "overrides": {

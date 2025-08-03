@@ -3,6 +3,7 @@
   import type { ActionData, PageData } from "./$types"
   import { page } from "$app/stores"
   import type { RelationshipProperties } from "$lib/types"
+  import InteractiveMap from "$lib/components/InteractiveMap.svelte"
 
   export let data: PageData
   export let form: ActionData
@@ -161,7 +162,12 @@
 </script>
 
 <div class="container">
-  <h1>World: {data.world?.name}</h1>
+  <h1 class="text-2xl font-bold">World: {data.world?.name}</h1>
+  <!-- Interactive Map -->
+  <section class="card p-4">
+    <h2 class="text-2xl font-bold mb-4">Interactive Map</h2>
+    <InteractiveMap />
+  </section>
 
   <!-- Section for Adding New Elements -->
   <section class="card">
