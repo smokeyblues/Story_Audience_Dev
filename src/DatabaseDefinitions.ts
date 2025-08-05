@@ -387,6 +387,7 @@ export type Database = {
           created_at: string
           description: string | null
           id: string
+          map_image_url: string | null
           name: string
           team_id: string
           updated_at: string
@@ -395,6 +396,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          map_image_url?: string | null
           name: string
           team_id: string
           updated_at?: string
@@ -403,6 +405,7 @@ export type Database = {
           created_at?: string
           description?: string | null
           id?: string
+          map_image_url?: string | null
           name?: string
           team_id?: string
           updated_at?: string
@@ -454,7 +457,14 @@ export type Database = {
     }
     Enums: {
       invitation_status: "pending" | "accepted" | "declined"
-      team_role: "owner" | "admin" | "member"
+      team_role:
+        | "owner"
+        | "admin"
+        | "member"
+        | "writer"
+        | "canon-editor"
+        | "story-lead"
+        | "world-architect"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -583,7 +593,15 @@ export const Constants = {
   public: {
     Enums: {
       invitation_status: ["pending", "accepted", "declined"],
-      team_role: ["owner", "admin", "member"],
+      team_role: [
+        "owner",
+        "admin",
+        "member",
+        "writer",
+        "canon-editor",
+        "story-lead",
+        "world-architect",
+      ],
     },
   },
 } as const

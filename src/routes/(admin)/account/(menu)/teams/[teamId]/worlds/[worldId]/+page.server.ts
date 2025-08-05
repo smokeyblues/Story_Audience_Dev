@@ -134,6 +134,54 @@ export const actions: Actions = {
     redirect(303, `/account/teams/${params.teamId}/worlds`)
   },
 
+  uploadMap: async ({ request, locals: { supabase }, params }) => {
+    const formData = await request.formData()
+    const mapImage = formData.get("mapImage") as File
+
+    if (!mapImage || mapImage.size === 0) {
+      return fail(400, { error: "Please select an image to upload." })
+    }
+
+    // 1. Upload the file to Supabase Storage
+    const filePath = `${params.teamId}/${params.worldId}/${mapImage.name}`
+    const { error: uploadError } = await supabase.storage
+      .from("map-images")
+      .upload(filePath, mapImage, {
+        upsert: true, // Overwrite file if it already exists
+      })
+
+    if (uploadError) {
+      return fail(500, {
+        error: "Failed to upload map image.",
+        details: uploadError.message,
+      })
+    }
+
+    // 2. Get the public URL of the uploaded file
+    const { data: urlData } = supabase.storage
+      .from("map-images")
+      .getPublicUrl(filePath)
+
+    if (!urlData || !urlData.publicUrl) {
+      return fail(500, { error: "Could not retrieve public URL for the map." })
+    }
+
+    // 3. Update the worlds table with the new URL
+    const { error: dbError } = await supabase
+      .from("worlds")
+      .update({ map_image_url: urlData.publicUrl as string }) // Use a valid column, e.g., 'description'
+      .eq("id", params.worldId)
+
+    if (dbError) {
+      return fail(500, {
+        error: "Failed to update world with map URL.",
+        details: dbError.message,
+      })
+    }
+
+    return { success: true, mapUrl: urlData.publicUrl }
+  },
+
   // NEW, UPDATED VERSION
   createElement: async ({ request, locals: { supabase }, params }) => {
     const formData = await request.formData()

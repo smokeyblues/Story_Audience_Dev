@@ -165,8 +165,27 @@
   <h1 class="text-2xl font-bold">World: {data.world?.name}</h1>
   <!-- Interactive Map -->
   <section class="card p-4">
-    <h2 class="text-2xl font-bold mb-4">Interactive Map</h2>
-    <InteractiveMap />
+    <h2 class="text-2xl font-bold mb-4">World Map</h2>
+    <InteractiveMap mapImageUrl={data.world?.map_image_url ?? null} />
+  </section>
+
+  <section class="card p-4 mt-6">
+    <h2 class="text-2xl font-bold mb-4">Upload World Map</h2>
+    <form method="POST" action="?/uploadMap" enctype="multipart/form-data">
+      <div class="form-control w-full max-w-xs">
+        <label class="label" for="map-upload">
+          <span class="label-text">Select map image</span>
+        </label>
+        <input
+          id="map-upload"
+          name="mapImage"
+          type="file"
+          class="file-input file-input-bordered w-full max-w-xs"
+          required
+        />
+      </div>
+      <button type="submit" class="btn btn-primary mt-4">Upload</button>
+    </form>
   </section>
 
   <!-- Section for Adding New Elements -->

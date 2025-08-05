@@ -5,7 +5,14 @@ import type { Tables } from "../../../../../../DatabaseDefinitions"
 type TeamWithWorlds = {
   team_id: string
   team_name: string
-  user_role: "owner" | "admin" | "member"
+  user_role:
+    | "owner"
+    | "admin"
+    | "member"
+    | "writer"
+    | "canon-editor"
+    | "story-lead"
+    | "world-architect"
   owner_id: string
   worlds: Tables<"worlds">[]
 }

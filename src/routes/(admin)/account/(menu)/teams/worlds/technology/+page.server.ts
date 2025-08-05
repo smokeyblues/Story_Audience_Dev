@@ -66,6 +66,7 @@ export const load: PageServerLoad = async ({
                 team_id,
                 created_at,
                 description,
+                map_image_url,
                 updated_at
             )
         `,
