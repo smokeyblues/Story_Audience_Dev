@@ -305,7 +305,7 @@ export const actions = {
       await sendUserEmail({
         user: session.user,
         subject: "Welcome!",
-        from_email: "no-reply@nanowritlabs.com",
+        from_email: "no-reply@mail.nanowritlabs.com",
         template_name: "welcome_email",
         template_properties: {
           companyName: "NanoWrit Labs",
