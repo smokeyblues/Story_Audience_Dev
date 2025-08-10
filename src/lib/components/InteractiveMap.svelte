@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { onMount, afterUpdate } from "svelte"
+  import { onMount, afterUpdate, onDestroy } from "svelte"
   import type { Map as LeafletMap } from "leaflet"
 
   // The URL for the custom map image, passed from the parent component.
@@ -35,7 +35,8 @@
         // DO NOT set the view here.
         map = L.map(mapContainer, {
           crs: L.CRS.Simple,
-          minZoom: -5, // Allow zooming out far enough for large images
+          zoomSnap: 0.1,
+          maxBoundsViscosity: 1.0,
         })
 
         const img = new Image()
@@ -52,13 +53,33 @@
           // Create an image overlay and add it to the map.
           L.imageOverlay(mapImageUrl, bounds).addTo(map)
 
-          // *** THIS IS THE FIX ***
-          // Fit the map view to the bounds of the image.
-          // This sets the center AND zoom automatically.
-          map.fitBounds(bounds)
+          // Compute a "cover" zoom so the image completely fills the viewport
+          // (no whitespace/borders), even if it means some edges are off-screen.
+          const center = [img.height / 2, img.width / 2] as [number, number]
 
-          // Now that the view is set, it is SAFE to add a marker.
-          L.marker(map.getCenter()).addTo(map).bindPopup("Map Center")
+          const updateViewToCover = () => {
+            const coverZoom = map.getBoundsZoom(L.latLngBounds(bounds), false)
+
+            map.setView(center, coverZoom, { animate: false })
+            map.setMinZoom(coverZoom)
+            map.setMaxZoom(coverZoom + 4)
+          }
+
+          // Constrain panning to the image and make edges "sticky".
+          map.setMaxBounds(bounds)
+
+          updateViewToCover()
+
+          // Recompute on resize so it continues to fill the container.
+          const handleResize = () => updateViewToCover()
+          window.addEventListener("resize", handleResize)
+
+          onDestroy(() => {
+            window.removeEventListener("resize", handleResize)
+          })
+
+          // Optional marker at center
+          L.marker(center).addTo(map).bindPopup("Map Center")
         }
 
         img.onerror = () => {
