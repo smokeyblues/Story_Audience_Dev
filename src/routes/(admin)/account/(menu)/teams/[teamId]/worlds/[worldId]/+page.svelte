@@ -162,6 +162,10 @@
 </script>
 
 <div class="container">
+  <a
+    href={`/account/teams/${$page.params.teamId}/worlds/${$page.params.worldId}/treatment`}
+    class="btn btn-primary">Transmedia Production Bible</a
+  >
   <h1 class="text-2xl font-bold">World: {data.world?.name}</h1>
   <!-- Interactive Map -->
   <section class="card p-4">

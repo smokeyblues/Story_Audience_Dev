@@ -7,7 +7,7 @@ export type Json =
   | Json[]
 
 export type Database = {
-  // Allows to automatically instanciate createClient with right options
+  // Allows to automatically instantiate createClient with right options
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "12.2.3 (519615d)"
@@ -403,6 +403,228 @@ export type Database = {
         }
         Relationships: []
       }
+      world_business_details: {
+        Row: {
+          business_models: string | null
+          created_at: string | null
+          goals_creative: string | null
+          goals_economic: string | null
+          goals_user: string | null
+          id: string
+          success_indicators: string | null
+          target_audience: string | null
+          updated_at: string | null
+          user_need: string | null
+          world_id: string
+        }
+        Insert: {
+          business_models?: string | null
+          created_at?: string | null
+          goals_creative?: string | null
+          goals_economic?: string | null
+          goals_user?: string | null
+          id?: string
+          success_indicators?: string | null
+          target_audience?: string | null
+          updated_at?: string | null
+          user_need?: string | null
+          world_id: string
+        }
+        Update: {
+          business_models?: string | null
+          created_at?: string | null
+          goals_creative?: string | null
+          goals_economic?: string | null
+          goals_user?: string | null
+          id?: string
+          success_indicators?: string | null
+          target_audience?: string | null
+          updated_at?: string | null
+          user_need?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_business_details_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: true
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_design_specs: {
+        Row: {
+          branding_guidelines_intro: string | null
+          created_at: string | null
+          design_aesthetic_description: string | null
+          full_assets_list_description: string | null
+          id: string
+          media_design_styles_notes: string | null
+          style_guide_notes: string | null
+          updated_at: string | null
+          world_id: string
+        }
+        Insert: {
+          branding_guidelines_intro?: string | null
+          created_at?: string | null
+          design_aesthetic_description?: string | null
+          full_assets_list_description?: string | null
+          id?: string
+          media_design_styles_notes?: string | null
+          style_guide_notes?: string | null
+          updated_at?: string | null
+          world_id: string
+        }
+        Update: {
+          branding_guidelines_intro?: string | null
+          created_at?: string | null
+          design_aesthetic_description?: string | null
+          full_assets_list_description?: string | null
+          id?: string
+          media_design_styles_notes?: string | null
+          style_guide_notes?: string | null
+          updated_at?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_design_specs_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: true
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_functional_specs: {
+        Row: {
+          created_at: string | null
+          id: string
+          world_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          world_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_functional_specs_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: true
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_plot_points: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          order_index: number
+          updated_at: string | null
+          world_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          order_index?: number
+          updated_at?: string | null
+          world_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          order_index?: number
+          updated_at?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_plot_points_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: false
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_tech_specs: {
+        Row: {
+          created_at: string | null
+          id: string
+          world_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          world_id: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_tech_specs_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: true
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      world_treatments: {
+        Row: {
+          backstory_context: string | null
+          characterization_attitude: string | null
+          created_at: string | null
+          id: string
+          synopsis: string | null
+          tagline: string | null
+          updated_at: string | null
+          world_id: string
+        }
+        Insert: {
+          backstory_context?: string | null
+          characterization_attitude?: string | null
+          created_at?: string | null
+          id?: string
+          synopsis?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+          world_id: string
+        }
+        Update: {
+          backstory_context?: string | null
+          characterization_attitude?: string | null
+          created_at?: string | null
+          id?: string
+          synopsis?: string | null
+          tagline?: string | null
+          updated_at?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_treatments_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: true
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worlds: {
         Row: {
           created_at: string
@@ -459,16 +681,16 @@ export type Database = {
         }[]
       }
       get_user_role_in_team: {
-        Args: { p_user_id: string; p_team_id: string }
+        Args: { p_team_id: string; p_user_id: string }
         Returns: Database["public"]["Enums"]["team_role"]
       }
       get_user_teams_with_details: {
         Args: Record<PropertyKey, never>
         Returns: {
+          owner_id: string
           team_id: string
           team_name: string
           user_role: Database["public"]["Enums"]["team_role"]
-          owner_id: string
         }[]
       }
       is_team_member: {
