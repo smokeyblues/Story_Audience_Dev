@@ -1,10 +1,14 @@
 <!-- src/routes/+page.svelte -->
 <script lang="ts">
+  import WaitlistModal from "$lib/components/WaitlistModal.svelte"
   import {
     WebsiteName,
     WebsiteBaseUrl,
     WebsiteDescription,
   } from "./../../config" // Assuming config is in src/config.ts or similar
+  import type { PageData } from "./$types"
+
+  export let data: PageData
 
   // SEO and JSON-LD setup
   const ldJson = {
@@ -52,6 +56,10 @@
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   {@html jsonldScript}
 </svelte:head>
+
+{#if !data.session}
+  <WaitlistModal />
+{/if}
 
 <!-- Hero Section (Your Existing Code - Slightly Enhanced) -->
 <div class="hero min-h-[70vh] bg-base-200">
