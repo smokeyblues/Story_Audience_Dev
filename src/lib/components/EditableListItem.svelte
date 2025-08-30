@@ -1,41 +1,38 @@
 <!-- src/lib/components/EditableListItem.svelte -->
 <script lang="ts">
   import { enhance } from "$app/forms"
-  // import { createEventDispatcher } from "svelte"
   import type { SubmitFunction } from "@sveltejs/kit"
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  // Make the Item type more flexible: it must have an id, but can have any other string properties.
   type Item = {
     id: string
-    description: string
-    // Add other fields if needed later, e.g., order_index
+    [key: string]: unknown // string | number | boolean | null | undefined // Index signature for flexibility
   }
 
   let {
     item,
-    field = "description", // default to "description"
-    updateAction, // e.g., "?/updatePlotPoint"
-    deleteAction, // e.g., "?/deletePlotPoint"
-    textAreaRows = 2, // Default rows for textarea
+    field, // The name of the property on the 'item' object to edit (e.g., "description", "premise")
+    updateAction,
+    deleteAction,
+    textAreaRows = 2,
   }: {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    item: Record<string, any>
-    field?: string
+    item: Item
+    field: string
     updateAction: string
     deleteAction: string
     textAreaRows?: number
   } = $props()
 
   let editing = $state(false)
-  let editedValue = $state(item[field])
+  // Use the 'field' prop to dynamically get the initial value
+  let editedDescription = $state(item[field])
   let isDeleting = $state(false)
   let isSaving = $state(false)
   let formError = $state<string | null>(null)
 
-  // const dispatch = createEventDispatcher()
-
   function handleEditClick() {
-    editedValue = item[field] // Reset on opening edit mode
+    // Reset to the current item's value when editing starts
+    editedDescription = item[field]
     editing = true
     formError = null
   }
@@ -45,67 +42,48 @@
     formError = null
   }
 
-  // Inside src/lib/components/EditableListItem.svelte
-
-  const handleDelete: SubmitFunction = (opts) => {
-    // ---> Destructure cancel directly from the options object <---
-    const { cancel } = opts
-
-    // Ask for confirmation FIRST
+  const handleDelete: SubmitFunction = ({ cancel }) => {
     if (!window.confirm("Are you sure you want to delete this item?")) {
-      // ---> Call cancel() directly if the user clicks "Cancel" <---
       cancel()
-      return // Stop execution here if cancelled
+      return
     }
-
-    // If confirmed, THEN set loading state and proceed.
-    // This part runs *before* the actual fetch request is made by enhance.
     isDeleting = true
     formError = null
-
-    // Now, return the function that will run *after* the submission attempt.
     return async ({ result }) => {
-      // This runs once the server action responds.
-      isDeleting = false // Reset loading state regardless of outcome
+      isDeleting = false
       if (result.type === "failure") {
         formError = result.data?.error ?? "Failed to delete item."
-      } else if (result.type === "success") {
-        // Optional dispatch
-        // dispatch('deleted', { id: item.id });
       }
     }
   }
 
-  // Apply the same pattern to handleUpdate (though it doesn't need cancel())
   const handleUpdate: SubmitFunction = () => {
-    // --- Runs BEFORE submission ---
     isSaving = true
     formError = null
-
-    // --- Runs AFTER submission ---
     return async ({ result }) => {
       isSaving = false
       if (result.type === "failure") {
         formError = result.data?.error ?? "Failed to update item."
       } else if (result.type === "success") {
-        editing = false // Close edit mode on success
-        // Optional dispatch
-        // dispatch('updated', { id: item.id, description: editedValue });
+        editing = false
       }
     }
   }
 
-  // Reset local state if the item prop itself changes externally
   $effect(() => {
     if (!editing) {
-      editedValue = item[field]
+      // Update local state if the external item prop changes
+      editedDescription = item[field]
     }
   })
 </script>
 
-<div class="p-3 bg-base-100 rounded shadow-sm group">
+<div
+  class="p-3 bg-base-100 rounded-lg shadow-sm group border border-transparent hover:border-base-300 transition-colors"
+>
   {#if !editing}
     <div class="flex flex-col md:flex-row justify-between items-start gap-2">
+      <!-- Display the correct field dynamically -->
       <p class="whitespace-pre-wrap flex-1 py-1">{item[field]}</p>
       <div class="flex gap-1 flex-shrink-0 self-end md:self-center">
         <button
@@ -134,9 +112,10 @@
   {:else}
     <form method="POST" action={updateAction} use:enhance={handleUpdate}>
       <input type="hidden" name="id" value={item.id} />
+      <!-- The name of the textarea should match the 'field' prop -->
       <textarea
         name={field}
-        bind:value={editedValue}
+        bind:value={editedDescription}
         class="textarea textarea-bordered w-full mb-2"
         rows={textAreaRows}
         required
