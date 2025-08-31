@@ -1,9 +1,4 @@
-<!-- src/routes/pricing/pricing_module.svelte -->
 <script lang="ts">
-  // No longer import pricingPlans here, receive it as a prop
-  // import { pricingPlans } from './pricing_plans';
-
-  // Define the expected shape of a plan object (you might want a shared type)
   type PricingPlan = {
     id: string
     name: string
@@ -11,12 +6,12 @@
     price: string
     priceIntervalName: string
     stripe_price_id: string | null
-    stripe_product_id?: string // Optional based on your plans file
+    stripe_product_id?: string | null // Modified to be optional or null
     features: string[]
   }
 
   interface Props {
-    plansToDisplay: PricingPlan[] // Renamed prop
+    plansToDisplay: PricingPlan[]
     highlightedPlanId?: string
     callToAction: string
     currentPlanId?: string
@@ -24,7 +19,7 @@
   }
 
   let {
-    plansToDisplay = [], // Default to empty array
+    plansToDisplay = [],
     highlightedPlanId = "",
     callToAction,
     currentPlanId = "",
@@ -38,25 +33,25 @@
     : ''} flex-wrap items-stretch"
 >
   {#each plansToDisplay as plan (plan.id)}
-    <!-- Iterate over the prop -->
     <div
       class="card card-bordered {plan.id === highlightedPlanId ||
-      plan.id === 'producer'
-        ? 'border-primary' // Highlight 'producer' or the specified ID
+      plan.id.startsWith('producer') // Highlight both monthly and annual producer
+        ? 'border-primary'
         : 'border-base-300'} shadow-lg flex flex-col w-full sm:w-[calc(50%-1.25rem)] lg:w-[calc(33.33%-1.8rem)] max-w-[340px] p-6"
     >
-      <!-- /* Makes content push footer down */ -->
       <div class="flex-grow">
         <div class="text-xl font-bold mb-2">{plan.name}</div>
         <p
           class="mt-1 text-sm text-base-content/80 leading-relaxed min-h-[60px]"
         >
-          <!-- {/* Give description some min height */} -->
           {plan.description}
         </p>
         <div class="mt-4 pt-4 text-sm text-base-content/90">
-          {#if plan.id !== "creative"}
-            Includes Creative features, plus:{:else}Plan Includes:{/if}
+          {#if plan.id !== "creator"}
+            Includes Creator features, plus:
+          {:else}
+            Plan Includes:
+          {/if}
           <ul class="list-disc list-inside mt-2 space-y-1 text-base-content/80">
             {#each plan.features as feature}
               <li>{feature}</li>
@@ -66,15 +61,16 @@
       </div>
 
       <div class="pt-8 mt-auto">
-        <!-- {/* Pushes price/button to bottom */} -->
         <div class="mb-4">
           <span class="text-4xl font-bold">{plan.price}</span>
-          {#if plan.id !== "creative"}
+          {#if plan.price !== "Contact Us" && plan.id !== "creator"}
             <span class="text-base-content/60"
               >/{plan.priceIntervalName.includes("year")
                 ? "month (billed annually)"
                 : "month"}</span
             >
+          {:else if plan.price === "Contact Us"}
+            <span class="text-base-content/60">/{plan.priceIntervalName}</span>
           {/if}
         </div>
         <div class="mt-6 pt-4">
@@ -84,19 +80,22 @@
             >
               Current Plan
             </div>
+          {:else if plan.id === "production-partner"}
+            <a href="/contact_us" class="btn btn-accent w-full shadow-md">
+              Contact Sales
+            </a>
           {:else}
-            <!-- /* Use 'creative' for free plan ID */ -->
             <a
               href={"/account/subscribe/" +
                 (plan.stripe_price_id === null
                   ? "free_plan"
                   : plan.stripe_price_id)}
-              class="btn {plan.id === 'creative'
+              class="btn {plan.id === 'creator'
                 ? 'btn-outline'
                 : 'btn-primary'} w-full shadow-md"
               data-sveltekit-preload-data="off"
             >
-              {plan.id === "creative" ? "Start for Free" : callToAction}
+              {plan.id === "creator" ? "Start for Free" : callToAction}
             </a>
           {/if}
         </div>
