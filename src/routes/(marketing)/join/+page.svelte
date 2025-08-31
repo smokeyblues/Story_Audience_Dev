@@ -24,10 +24,13 @@
         </p>
         <a href="/" class="btn btn-primary">Return Home</a>
       {:else}
-        <h1 class="text-4xl font-bold">The Adventure Begins Soon</h1>
+        <h1 class="text-4xl font-bold">
+          Your Journey From Creator to Producer Starts Here.
+        </h1>
         <p class="py-6 text-lg">
-          Be the first to get access to Nanowrit Labs. Join our private beta
-          waitlist and help shape the future of transmedia storytelling.
+          Your journey from creator to producer starts here. Join the Nanowrit
+          Labs waitlist for early access to our story development platform and
+          an inside track on our producer services. Let's get your project made.
         </p>
 
         <form method="POST" use:enhance class="card-body p-0">

@@ -38,10 +38,13 @@
         <button class="btn btn-primary" on:click={closeModal}>Got it!</button>
       </div>
     {:else}
-      <h3 class="font-bold text-2xl">The Adventure Begins Soon</h3>
+      <h3 class="font-bold text-2xl">
+        Your Journey From Creator to Producer Starts Here.
+      </h3>
       <p class="py-4 text-lg">
-        Be the first to get access to Nanowrit Labs. Join our private beta
-        waitlist and help shape the future of transmedia storytelling.
+        Your journey from creator to producer starts here. Join the Nanowrit
+        Labs waitlist for early access to our story development platform and an
+        inside track on our producer services. Let's get your project made.
       </p>
       <form
         method="POST"
