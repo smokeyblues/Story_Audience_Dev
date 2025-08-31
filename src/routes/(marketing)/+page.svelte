@@ -90,8 +90,8 @@
       <div
         class="mt-6 md:mt-8 flex flex-row flex-wrap gap-4 place-content-center"
       >
-        <a href="/pricing" class="btn btn-primary btn-lg px-8 shadow-lg">
-          Get Started for Free
+        <a href="/join" class="btn btn-primary btn-lg px-8 shadow-lg">
+          Join the Waitlist
         </a>
         <a href="/roadmap" class="btn btn-ghost btn-lg px-8"> Our Services </a>
       </div>
@@ -131,53 +131,6 @@
     </div>
   </section>
 
-  <!-- Section 2: How it Works (Simplified Workflow) -->
-  <!-- <section>
-    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
-      Your Workflow, Elevated
-    </h2>
-    <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-12">
-      Our platform is designed to guide you through the modern development
-      process, transforming your creative workflow into a strategic asset.
-    </p>
-    <ul class="steps steps-vertical lg:steps-horizontal w-full">
-      <li class="step step-primary">
-        <span class="text-left font-semibold"
-          >1. Plan & Structure<br /><span
-            class="font-normal text-sm text-base-content/70"
-            >Define your story, world, characters, and strategy using the Bible
-            framework.</span
-          ></span
-        >
-      </li>
-      <li class="step step-primary">
-        <span class="text-left font-semibold"
-          >2. Ideate & Visualize<br /><span
-            class="font-normal text-sm text-base-content/70"
-            >Upload assets. (Future: Use integrated AI & curated assets to bring
-            ideas to life).
-          </span></span
-        >
-      </li>
-      <li class="step step-secondary">
-        <span class="text-left font-semibold"
-          >3. Connect & Engage<br /><span
-            class="font-normal text-sm text-base-content/70"
-            >Share concepts, gather feedback via Discord, and log insights.</span
-          ></span
-        >
-      </li>
-      <li class="step step-accent">
-        <span class="text-left font-semibold"
-          >4. Iterate & Grow<br /><span
-            class="font-normal text-sm text-base-content/70"
-            >Refine your vision, build your audience, and develop your
-            investable IP.</span
-          ></span
-        >
-      </li>
-    </ul>
-  </section> -->
   <section>
     <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
       Your Workflow, Elevated
