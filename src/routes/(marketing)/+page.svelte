@@ -24,34 +24,34 @@
   // Define sections for easier readability
   const sections = [
     {
-      title: "Overcome Creative Friction",
+      title: "Story Development Tools",
       description:
-        "Stop wrestling with scattered notes and endless decisions. Our structured approach helps you focus your vision. Future curated assets (Virtual Studio System) will provide inspiring starting points, reducing early-stage bottlenecks.",
+        "Stop wrestling with scattered notes. Our platform provides a structured environment to build your world bible, develop complex characters, and outline your narrative. Go from a simple idea to a fully-realized universe.",
       icon: "🧩", // Placeholder icon
     },
     {
-      title: "Ensure Asset Consistency",
+      title: "Audience Development Strategy",
       description:
-        "Plan for cross-platform coherence from day one. Define your world, characters, and props centrally. Our future shared asset library will ensure seamless visual and narrative integration across all your transmedia outputs.",
+        "A great story needs a great audience. We guide you to build your project in a way that creates multiple entry points for fans, helping you build a passionate community and validate your concept long before production begins.",
       icon: "🔗", // Placeholder icon
     },
     {
-      title: "Accessible & Inspiring",
+      title: "Create Investable IP",
       description:
-        "Get started for free with essential planning tools. Our platform democratizes access to structured creativity. Future curated assets and AI tools will level the playing field, sparking new ideas and enabling high-quality concepting.",
+        "Move beyond just a script. We help you assemble a professional pitch package, complete with a world bible and an audience engagement strategy, that de-risks your project for investors and partners.",
       icon: "💡", // Placeholder icon
     },
     {
-      title: "Build Investable IP",
+      title: "Executive Producer Services",
       description:
-        "Move beyond just a script. Develop a validated narrative ecosystem with demonstrated audience engagement (via feedback logging & community). Present investors with a compelling, de-risked package ready for large-scale production.",
+        "The journey doesn't end with a pitch. For the most promising projects developed on our platform, our team of experienced producers will provide the guidance and connections needed to get your project made.",
       icon: "📈", // Placeholder icon
     },
   ]
 </script>
 
 <svelte:head>
-  <title>{WebsiteName} - The Transmedia IDE</title>
+  <title>{WebsiteName} - From Script to Screen. And Beyond.</title>
   <meta name="description" content={WebsiteDescription} />
   <!-- eslint-disable-next-line svelte/no-at-html-tags -->
   {@html jsonldScript}
@@ -68,23 +68,23 @@
       <div
         class="text-lg md:text-xl font-bold uppercase tracking-wider bg-clip-text text-transparent bg-gradient-to-r from-primary to-accent mb-3 md:mb-5 pb-1"
       >
-        The Transmedia IDE
+        From Script to Screen. And Beyond.
       </div>
 
       <h1 class="text-4xl md:text-6xl font-bold mb-4" style="line-height: 1.2;">
-        Unlock Your Story's Potential:
-        <span class="text-primary">Guided</span>,
-        <span class="text-secondary">Gamified</span>,
-        <span class="text-info">Geared for Success</span>
+        Develop Your Story.
+        <!-- <span class="text-primary">Guided</span> -->
+        <span class="text-primary">Build Your Audience.</span>
+        <span class="text-info">Get Your Project Made.</span>
       </h1>
 
       <p class="py-6 text-lg md:text-xl text-base-content/80">
-        Master the art of transmedia storytelling through an engaging journey.
+        Nanowrit Labs is an end-to-end development studio that combines powerful
+        story-building tools with expert producer services.
       </p>
       <p class="py-6 text-lg md:text-xl text-base-content/80">
-        The Transmedia IDE that transforms planning into an adventure. Learn to
-        structure your narrative world, cultivate a loyal fanbase, and build
-        investable intellectual property beyond traditional limits.
+        We provide a clear path for creators to transform a script into
+        valuable, fundable Intellectual Property.
       </p>
 
       <div
@@ -93,9 +93,7 @@
         <a href="/pricing" class="btn btn-primary btn-lg px-8 shadow-lg">
           Get Started for Free
         </a>
-        <a href="/roadmap" class="btn btn-ghost btn-lg px-8">
-          Explore the Vision
-        </a>
+        <a href="/roadmap" class="btn btn-ghost btn-lg px-8"> Our Services </a>
       </div>
     </div>
   </div>
@@ -109,11 +107,15 @@
       Tired of Limits? Build Beyond Them.
     </h2>
     <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-12">
-      Bringing ambitious, multi-platform stories to life is complex. Scattered
+      Nanowrit Labs is more than a writing app - it's an end-to-end development
+      studio. We provide the integrated tools to architect your story world and
+      the expert guidance to get it produced. Stop just writing stories - start
+      building empires.
+      <!-- Bringing ambitious, multi-platform stories to life is complex. Scattered
       ideas, creative bottlenecks, and the struggle for validation can stall
       even the best concepts. The
       <span class="font-semibold text-primary">{WebsiteName} IDE</span> provides
-      the structure and (future) tools to turn that complexity into your advantage.
+      the structure and (future) tools to turn that complexity into your advantage. -->
     </p>
     <!-- Feature/Benefit Grid -->
     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 lg:gap-8">
@@ -130,10 +132,14 @@
   </section>
 
   <!-- Section 2: How it Works (Simplified Workflow) -->
-  <section>
+  <!-- <section>
     <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
       Your Workflow, Elevated
     </h2>
+    <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-12">
+      Our platform is designed to guide you through the modern development
+      process, transforming your creative workflow into a strategic asset.
+    </p>
     <ul class="steps steps-vertical lg:steps-horizontal w-full">
       <li class="step step-primary">
         <span class="text-left font-semibold"
@@ -171,6 +177,61 @@
         >
       </li>
     </ul>
+  </section> -->
+  <section>
+    <h2 class="text-3xl md:text-4xl font-bold text-center mb-12">
+      Your Workflow, Elevated
+    </h2>
+    <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-12">
+      Our platform is designed to guide you through the modern development
+      process, transforming your creative workflow into a strategic asset.
+    </p>
+    <ul class="steps steps-vertical lg:steps-horizontal w-full">
+      <li class="step step-primary">
+        <div class="lg:px-4">
+          <span class="text-left font-semibold"
+            >1. Plan & Structure<br /><span
+              class="font-normal text-sm text-base-content/70"
+              >Build a professional world bible that transforms your story into
+              a valuable, expandable IP ready for development.</span
+            ></span
+          >
+        </div>
+      </li>
+      <li class="step step-primary">
+        <div class="lg:px-4">
+          <span class="text-left font-semibold"
+            >2. Ideate & Visualize<br /><span
+              class="font-normal text-sm text-base-content/70"
+              >Map your narrative and identify key audience touchpoints, turning
+              your story into an immersive, multi-platform experience.</span
+            ></span
+          >
+        </div>
+      </li>
+      <li class="step step-secondary">
+        <div class="lg:px-4">
+          <span class="text-left font-semibold"
+            >3. Connect & Engage<br /><span
+              class="font-normal text-sm text-base-content/70"
+              >Share concepts with a target community, gather feedback, and
+              begin building a validated audience for your project.</span
+            ></span
+          >
+        </div>
+      </li>
+      <li class="step step-accent">
+        <div class="lg:px-4">
+          <span class="text-left font-semibold"
+            >4. Iterate & Grow<br /><span
+              class="font-normal text-sm text-base-content/70"
+              >Refine your vision and assemble a professional pitch package to
+              attract investors, partners, and producer services.</span
+            ></span
+          >
+        </div>
+      </li>
+    </ul>
   </section>
 
   <!-- Section 3: Built for Visionaries -->
@@ -179,10 +240,11 @@
       Built for the Next Generation of Storytellers
     </h2>
     <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-8">
-      If you're an indie filmmaker, game developer, world-builder, or author
-      with a story that breaks the mold, this platform is designed for you. We
-      empower creators aiming for significant cultural impact with the tools to
-      build narrative ecosystems.
+      Whether you're a solo creator with a universe in your head, a
+      collaborative team building the next big indie game, or a production house
+      planning a multi-platform franchise, <span
+        class="font-semibold text-primary">our platform and services</span
+      > scale with your ambition.
     </p>
     <a
       href="https://discord.gg/xNNDvNkKAS"
@@ -216,11 +278,11 @@
       Ready to Build Your Universe?
     </h2>
     <p class="text-lg md:text-xl text-base-content/80 max-w-3xl mx-auto mb-8">
-      Start structuring your transmedia vision today. Sign up for our free plan
-      and join a community of forward-thinking creators.
+      Join the waitlist for Nanowrit Labs and be the first to access our suite
+      of story development tools and producer services.
     </p>
-    <a href="/pricing" class="btn btn-primary btn-lg px-10 shadow-lg">
-      Get Started Now
+    <a href="/join" class="btn btn-primary btn-lg px-10 shadow-lg">
+      Join the Waitlist
     </a>
   </section>
 </div>
