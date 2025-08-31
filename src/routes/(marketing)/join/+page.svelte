@@ -6,7 +6,7 @@
 </script>
 
 <svelte:head>
-  <title>Join the Adventure - Nanowrit Labs</title>
+  <title>Join the Waitinglist - Nanowrit Labs</title>
   <meta
     name="description"
     content="Sign up for early access to Nanowrit Labs, the operating system for modern storytellers."
