@@ -625,6 +625,41 @@ export type Database = {
           },
         ]
       }
+      world_user_scenarios: {
+        Row: {
+          created_at: string | null
+          description: string
+          id: string
+          order_index: number
+          updated_at: string | null
+          world_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          description: string
+          id?: string
+          order_index?: number
+          updated_at?: string | null
+          world_id: string
+        }
+        Update: {
+          created_at?: string | null
+          description?: string
+          id?: string
+          order_index?: number
+          updated_at?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_user_scenarios_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: false
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       worlds: {
         Row: {
           created_at: string
