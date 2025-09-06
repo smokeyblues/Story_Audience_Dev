@@ -109,7 +109,7 @@
           </li>
           <li>
             <details>
-              <summary>Worlds</summary>
+              <summary>World Development</summary>
               <ul>
                 <li>
                   <a href="/account/teams/worlds">All Worlds</a>
@@ -171,7 +171,7 @@
           </li>
           <li>
             <details>
-              <summary>Transmedia Dev</summary>
+              <summary>Audience Development</summary>
               <ul>
                 <li>Treatment (TBD)</li>
                 <li>Business & Marketing (TBD)</li>
