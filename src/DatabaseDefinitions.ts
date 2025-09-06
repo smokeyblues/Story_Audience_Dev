@@ -403,6 +403,53 @@ export type Database = {
         }
         Relationships: []
       }
+      world_assets: {
+        Row: {
+          asset_category: string
+          created_at: string | null
+          file_name: string
+          file_path: string
+          file_type: string | null
+          id: string
+          size_bytes: number | null
+          updated_at: string | null
+          uploaded_by_user_id: string | null
+          world_id: string
+        }
+        Insert: {
+          asset_category?: string
+          created_at?: string | null
+          file_name: string
+          file_path: string
+          file_type?: string | null
+          id?: string
+          size_bytes?: number | null
+          updated_at?: string | null
+          uploaded_by_user_id?: string | null
+          world_id: string
+        }
+        Update: {
+          asset_category?: string
+          created_at?: string | null
+          file_name?: string
+          file_path?: string
+          file_type?: string | null
+          id?: string
+          size_bytes?: number | null
+          updated_at?: string | null
+          uploaded_by_user_id?: string | null
+          world_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "world_assets_world_id_fkey"
+            columns: ["world_id"]
+            isOneToOne: false
+            referencedRelation: "worlds"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       world_business_details: {
         Row: {
           business_models: string | null
@@ -730,6 +777,10 @@ export type Database = {
       }
       is_team_member: {
         Args: { team_id_to_check: string }
+        Returns: boolean
+      }
+      is_world_member: {
+        Args: { p_user_id: string; p_world_id: string }
         Returns: boolean
       }
     }
