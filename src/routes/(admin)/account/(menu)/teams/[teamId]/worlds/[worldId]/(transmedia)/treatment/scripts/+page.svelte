@@ -12,11 +12,11 @@
   $effect(() => {
     if (form?.success) {
       // Clear the file input after a successful upload
-      const fileInput = document.getElementById(
-        "script-file",
-      ) as HTMLInputElement
-      if (fileInput) {
-        fileInput.value = ""
+      if (form.action === "uploadScript") {
+        const fileInput = document.getElementById(
+          "script-file",
+        ) as HTMLInputElement
+        if (fileInput) fileInput.value = ""
       }
       invalidateAll()
     }
@@ -41,9 +41,7 @@
 
 <section>
   <h2 class="text-2xl font-semibold mb-4 border-b pb-2">Scripts</h2>
-  <p class="text-sm mb-6">
-    Upload scripts, treatments, or other documents related to your story.
-  </p>
+  <p class="text-sm mb-6">Upload existing scripts for your project.</p>
 
   <!-- List of Uploaded Scripts -->
   <div class="space-y-3 mb-8">
@@ -63,16 +61,18 @@
                 </p>
               </div>
               <div class="card-actions flex-shrink-0">
-                <a
-                  href={script.signedUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  class="btn btn-sm btn-outline"
-                  aria-disabled={!script.signedUrl}
-                  title={script.signedUrl ? "View Script" : "Processing..."}
-                >
-                  View
-                </a>
+                <!-- MODIFIED: "View" is now a form that opens in a new tab -->
+                <form method="POST" action="?/viewScript" target="_blank">
+                  <input
+                    type="hidden"
+                    name="filePath"
+                    value={script.file_path}
+                  />
+                  <button type="submit" class="btn btn-sm btn-outline">
+                    View
+                  </button>
+                </form>
+                <!-- Delete form remains the same -->
                 <form
                   method="POST"
                   action="?/deleteScript"
@@ -114,7 +114,7 @@
   >
     <div class="form-control w-full max-w-md">
       <label for="script-file" class="label">
-        <span class="label-text">Upload a new script</span>
+        <span class="label-text">Select a script file</span>
       </label>
       <input
         type="file"
@@ -125,16 +125,13 @@
       />
     </div>
     <button type="submit" class="btn btn-secondary mt-4">Upload Script</button>
-
-    {#if form?.action === "uploadScript" || form?.action === "deleteScript"}
-      {#if form.success}
-        <p class="text-success text-sm mt-2 inline-block ml-2">
-          {form.message}
-        </p>
-      {/if}
-      {#if form.error}
-        <p class="text-error text-sm mt-2 inline-block ml-2">{form.error}</p>
-      {/if}
-    {/if}
   </form>
+
+  <!-- Universal Form Feedback -->
+  {#if form?.action && form.error}
+    <p class="text-error text-sm mt-2">{form.error}</p>
+  {/if}
+  {#if form?.action && form.success}
+    <p class="text-success text-sm mt-2">{form.message}</p>
+  {/if}
 </section>

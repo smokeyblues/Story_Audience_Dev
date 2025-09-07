@@ -1,11 +1,10 @@
-import { fail } from "@sveltejs/kit"
+import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 import { createClient } from "@supabase/supabase-js"
 import { PUBLIC_SUPABASE_URL } from "$env/static/public"
 import { PRIVATE_SUPABASE_SERVICE_ROLE } from "$env/static/private"
 
-// This helper creates a temporary, admin-level Supabase client
-// that can bypass RLS policies for storage operations.
+// Helper to create a Supabase client with admin privileges
 const createAdminClient = () => {
   if (!PRIVATE_SUPABASE_SERVICE_ROLE) {
     throw new Error(
@@ -19,6 +18,7 @@ export const load: PageServerLoad = async ({
   locals: { supabase },
   params,
 }) => {
+  // Load the list of scripts without generating signed URLs upfront
   const { data: scriptAssets, error: dbError } = await supabase
     .from("world_assets")
     .select("id, file_name, file_path, size_bytes, created_at")
@@ -31,35 +31,43 @@ export const load: PageServerLoad = async ({
     return { scripts: [] }
   }
 
-  // Since the bucket is private, we must generate secure, temporary download links.
-  const scriptsWithUrls = await Promise.all(
-    (scriptAssets ?? []).map(async (script) => {
-      const { data, error: urlError } = await supabase.storage
-        .from("world-assets")
-        .createSignedUrl(script.file_path, 60 * 60) // URL is valid for 1 hour
-
-      if (urlError) {
-        console.error(
-          "Error creating signed URL for",
-          script.file_path,
-          urlError,
-        )
-        return { ...script, signedUrl: null }
-      }
-      return { ...script, signedUrl: data.signedUrl }
-    }),
-  )
-
-  return { scripts: scriptsWithUrls }
+  return { scripts: scriptAssets ?? [] }
 }
 
 export const actions: Actions = {
+  // --- NEW: Action to generate a signed URL on demand ---
+  viewScript: async ({ request, locals: { supabase } }) => {
+    const formData = await request.formData()
+    const filePath = formData.get("filePath")?.toString()
+
+    if (!filePath) {
+      return fail(400, { action: "viewScript", error: "File path is missing." })
+    }
+
+    // Create a short-lived (60 seconds) signed URL
+    const { data, error } = await supabase.storage
+      .from("world-assets")
+      .createSignedUrl(filePath, 60)
+
+    if (error) {
+      console.error("Error creating signed URL:", error)
+      return fail(500, {
+        action: "viewScript",
+        error: "Could not generate view link.",
+      })
+    }
+
+    // Redirect the user to the newly generated URL
+    throw redirect(303, data.signedUrl)
+  },
+
+  // --- uploadScript and deleteScript actions remain the same ---
+
   uploadScript: async ({ request, locals: { supabase, user }, params }) => {
     if (!user) {
       return fail(401, { action: "uploadScript", error: "Unauthorized" })
     }
 
-    // 1. VERIFY PERMISSION: Before touching any files, ensure the user is a member of the team.
     const { count, error: membershipError } = await supabase
       .from("team_memberships")
       .select("*", { count: "exact", head: true })
@@ -67,14 +75,12 @@ export const actions: Actions = {
       .eq("team_id", params.teamId)
 
     if (membershipError || (count ?? 0) === 0) {
-      console.error("Permission check failed:", membershipError?.message)
       return fail(403, {
         action: "uploadScript",
         error: "You don't have permission to upload to this team.",
       })
     }
 
-    // 2. PROCEED WITH UPLOAD: If permission is granted, use the admin client.
     const formData = await request.formData()
     const file = formData.get("scriptFile") as File
 
@@ -90,7 +96,7 @@ export const actions: Actions = {
 
     const { error: uploadError } = await supabaseAdmin.storage
       .from("world-assets")
-      .upload(filePath, file, { upsert: false })
+      .upload(filePath, file)
 
     if (uploadError) {
       console.error("Admin upload error:", uploadError)
@@ -100,7 +106,6 @@ export const actions: Actions = {
       })
     }
 
-    // 3. RECORD METADATA: After a successful upload, save the file's info in our public table.
     const { error: dbError } = await supabase.from("world_assets").insert({
       world_id: params.worldId,
       uploaded_by_user_id: user.id,
