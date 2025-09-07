@@ -49,6 +49,9 @@
   },
   "type": "module",
   "dependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/state": "^6.5.2",
+    "@codemirror/view": "^6.38.2",
     "@friendofsvelte/tipex": "^0.0.8",
     "@supabase/auth-ui-shared": "^0.1.8",
     "@supabase/auth-ui-svelte": "^0.2.9",
