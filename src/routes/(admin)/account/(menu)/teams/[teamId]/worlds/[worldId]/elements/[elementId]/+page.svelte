@@ -148,6 +148,8 @@
         fields: [
           { name: "description", label: "Description", type: "textarea" },
           { name: "region", label: "Region", type: "text" },
+          { name: "latitude", label: "Latitude", type: "number" },
+          { name: "longitude", label: "Longitude", type: "number" },
         ],
       },
       {

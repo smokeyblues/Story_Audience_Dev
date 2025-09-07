@@ -26,6 +26,8 @@
         fields: [
           { name: "description", label: "Description", type: "textarea" },
           { name: "region", label: "Region", type: "text" },
+          { name: "latitude", label: "Latitude", type: "number" },
+          { name: "longitude", label: "Longitude", type: "number" },
         ],
       },
       {
@@ -89,6 +91,7 @@
           { name: "description", label: "Description", type: "textarea" },
           { name: "date", label: "Date", type: "text" },
           { name: "participants", label: "Participants", type: "textarea" },
+          { name: "location", label: "Location", type: "text" },
         ],
       },
       {
