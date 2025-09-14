@@ -7,7 +7,19 @@ export const load: PageServerLoad = async ({
   params,
   locals: { supabase },
 }) => {
-  const { elementId } = params
+  const { worldId, elementId } = params
+
+  // --- NEW: Fetch the world data ---
+  const { data: world, error: worldError } = await supabase
+    .from("worlds")
+    .select("id, name, map_image_url")
+    .eq("id", worldId)
+    .single()
+
+  if (worldError || !world) {
+    console.error("Error fetching world:", worldError)
+    throw error(404, "World not found")
+  }
 
   // Fetch the main element's data
   const { data: element, error: elementError } = await supabase
@@ -44,7 +56,7 @@ export const load: PageServerLoad = async ({
   // --- MODIFIED: Fetch 'id', 'name', AND 'type' for all world elements ---
   const { data: worldElements, error: worldElementsError } = await supabase
     .from("elements")
-    .select("id, name, type") // Added 'type'
+    .select("*") // Fetch all properties
     .eq("world_id", element.world_id)
 
   if (worldElementsError) {
@@ -53,6 +65,7 @@ export const load: PageServerLoad = async ({
   }
 
   return {
+    world, // --- NEW: Return world data
     element,
     relationships: relationships ?? [],
     worldElements: worldElements ?? [],

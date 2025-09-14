@@ -4,6 +4,8 @@
   import type { PageData, ActionData } from "./$types"
   import { page } from "$app/stores"
   import RelationshipGraph from "$lib/components/RelationshipGraph.svelte"
+  import InteractiveMap from "$lib/components/InteractiveMap.svelte"
+  import type { Json } from "$lib/../DatabaseDefinitions"
 
   // Explicitly define the types for our data
   type ElementStub = {
@@ -34,6 +36,13 @@
       "id" in rel.target &&
       "name" in rel.target
     )
+  }
+
+  // --- NEW: Define a type for location properties for type safety ---
+  type LocationProperties = {
+    latitude?: number
+    longitude?: number
+    [key: string]: Json | undefined
   }
 
   export let data: PageData & { relationships: Relationship[] }
@@ -287,6 +296,21 @@
       availableRelationshipTypes = []
     }
   }
+
+  // --- NEW: Prepare the marker for the single location map ---
+  $: singleMarkerLocation = (() => {
+    if (
+      data.element.type === "Location" &&
+      data.element.properties &&
+      typeof data.element.properties === "object"
+    ) {
+      const props = data.element.properties as LocationProperties
+      if (props.latitude && props.longitude) {
+        return { lat: props.latitude, lng: props.longitude }
+      }
+    }
+    return undefined
+  })()
 </script>
 
 <div class="container space-y-6">
@@ -306,6 +330,23 @@
       {isEditing ? "Cancel" : "Edit Element"}
     </button>
   </div>
+
+  <!-- NEW: Map Display Section -->
+  {#if data.world.map_image_url && singleMarkerLocation}
+    <div class="card p-4">
+      <h2 class="text-xl font-bold mb-4">Location</h2>
+      <div class="rounded-lg overflow-hidden shadow-lg" style="height: 400px;">
+        <InteractiveMap
+          mapImageUrl={data.world.map_image_url}
+          elements={data.worldElements}
+          editable={false}
+          {singleMarkerLocation}
+          initialCenter={singleMarkerLocation}
+          singleMarkerElementName={data.element.name}
+        />
+      </div>
+    </div>
+  {/if}
 
   <!-- NEW: Relationship Graph Visualization -->
   {#if graphData.nodes.length > 1}

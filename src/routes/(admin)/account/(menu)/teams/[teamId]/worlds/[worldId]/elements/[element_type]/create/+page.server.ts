@@ -1,5 +1,6 @@
 import { error, fail, redirect } from "@sveltejs/kit"
 import type { PageServerLoad, Actions } from "./$types"
+import type { Json } from "../../../../../../../../../../../DatabaseDefinitions"
 
 export const load: PageServerLoad = async ({
   params,
@@ -115,12 +116,20 @@ export const actions: Actions = {
     }
 
     // Collect all property fields that start with "prop_"
-    const properties: Record<string, string> = {}
+    const properties: Record<string, unknown> = {}
     for (const [key, value] of formData.entries()) {
       if (key.startsWith("prop_") && value.toString().trim().length > 0) {
         const propName = key.substring(5) // Remove "prop_" prefix
         properties[propName] = value.toString().trim()
       }
+    }
+
+    // Add location data if available from hidden form fields
+    const latitude = formData.get("latitude")?.toString()
+    const longitude = formData.get("longitude")?.toString()
+    if (latitude && longitude) {
+      properties.latitude = parseFloat(latitude)
+      properties.longitude = parseFloat(longitude)
     }
 
     // Create the element
@@ -130,7 +139,8 @@ export const actions: Actions = {
         name: name.trim(),
         type: elementType,
         world_id: worldId,
-        properties: Object.keys(properties).length > 0 ? properties : null,
+        properties:
+          Object.keys(properties).length > 0 ? (properties as Json) : null,
       })
       .select()
       .single()

@@ -26,8 +26,13 @@
         fields: [
           { name: "description", label: "Description", type: "textarea" },
           { name: "region", label: "Region", type: "text" },
-          { name: "latitude", label: "Latitude", type: "number" },
-          { name: "longitude", label: "Longitude", type: "number" },
+          { name: "latitude", label: "Latitude", type: "number", step: "any" },
+          {
+            name: "longitude",
+            label: "Longitude",
+            type: "number",
+            step: "any",
+          },
         ],
       },
       {
@@ -173,7 +178,11 @@
   <!-- Interactive Map -->
   <section class="card p-4">
     <h2 class="text-2xl font-bold mb-4">World Map</h2>
-    <InteractiveMap mapImageUrl={data.world?.map_image_url ?? null} />
+    <InteractiveMap
+      mapImageUrl={data.world?.map_image_url ?? null}
+      elements={data.elements}
+      editable={true}
+    />
   </section>
 
   <section class="card p-4 mt-6">

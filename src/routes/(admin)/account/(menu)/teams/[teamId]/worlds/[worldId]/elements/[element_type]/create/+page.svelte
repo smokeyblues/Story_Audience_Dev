@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms"
   import type { PageData, ActionData } from "./$types"
   import { page } from "$app/stores"
+  import InteractiveMap from "$lib/components/InteractiveMap.svelte"
 
   export let data: PageData
   export let form: ActionData
@@ -133,6 +134,9 @@
     Object.values(elementTypes)
       .flat()
       .find((t) => t.name === data.elementType)?.fields ?? []
+
+  $: lat = $page.url.searchParams.get("lat")
+  $: lng = $page.url.searchParams.get("lng")
 </script>
 
 <div class="container space-y-6">
@@ -161,7 +165,28 @@
     <div class="card-body">
       <h2>Element Details</h2>
 
+      {#if lat && lng && data.world.map_image_url}
+        <div class="my-4 rounded-lg overflow-hidden border border-surface-300">
+          <p class="p-4 bg-surface-100 text-sm">
+            📍 Placing new element at the selected map coordinates.
+          </p>
+          <InteractiveMap
+            mapImageUrl={data.world.map_image_url}
+            editable={false}
+            singleMarkerLocation={{
+              lat: parseFloat(lat),
+              lng: parseFloat(lng),
+            }}
+          />
+        </div>
+      {/if}
+
       <form method="POST" action="?/create" use:enhance class="space-y-4">
+        {#if lat && lng}
+          <input type="hidden" name="latitude" value={lat} />
+          <input type="hidden" name="longitude" value={lng} />
+        {/if}
+
         <!-- Element Name -->
         <div>
           <label for="name" class="block text-sm font-medium mb-2">
