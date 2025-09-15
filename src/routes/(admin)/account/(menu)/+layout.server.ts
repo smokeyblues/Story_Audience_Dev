@@ -4,6 +4,10 @@ import type { LayoutServerLoad } from "./$types"
 import type { TeamMembershipWithTeamDetails } from "$lib/types" // Define this custom type below
 import { CreateProfileStep } from "../../../../config"
 import type { Database } from "../../../../DatabaseDefinitions"
+import {
+  fetchSubscription,
+  getOrCreateCustomerId,
+} from "../subscription_helpers.server"
 
 // Optional: Define a more specific type combining membership and team details
 // You might put this in a shared types file (e.g., src/lib/types.ts)
@@ -50,6 +54,35 @@ export const load: LayoutServerLoad = async ({
     CreateProfileStep
   ) {
     redirect(303, createProfilePath)
+  }
+
+  // Ensure every user has a Stripe customer ID
+  const { error: idError, customerId } = await getOrCreateCustomerId({
+    supabaseServiceRole: supabase, // Use the server-side client
+    user,
+  })
+
+  if (idError || !customerId) {
+    console.error("Error creating or fetching customer ID:", idError)
+    // Optional: Handle this error more gracefully, e.g., show a user-friendly message
+  }
+
+  const { primarySubscription, hasEverHadSubscription } =
+    await fetchSubscription({
+      customerId: customerId || "", // Use the fetched customer ID
+    })
+
+  const allowedPaths = [
+    "/account/billing",
+    "/account/select_plan",
+    "/account/subscribe/free_plan",
+    // Add any other paths that should be accessible without a subscription
+  ]
+  if (
+    !primarySubscription &&
+    !allowedPaths.some((p) => url.pathname.startsWith(p))
+  ) {
+    redirect(303, "/account/select_plan")
   }
 
   // Fetch the teams the user is a member of, along with their worlds
@@ -108,6 +141,8 @@ export const load: LayoutServerLoad = async ({
     profile,
     user,
     amr: aal?.currentAuthenticationMethods,
+    primarySubscription,
+    hasEverHadSubscription,
     // This now correctly includes the 'worlds' property
     userTeams,
   }
