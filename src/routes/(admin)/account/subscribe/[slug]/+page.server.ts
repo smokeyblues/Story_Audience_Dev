@@ -19,7 +19,31 @@ export const load: PageServerLoad = async ({
   }
 
   if (params.slug === "free_plan") {
-    // plan with no stripe_price_id. Redirect to account home
+    // Plan with no stripe_price_id. Get/create a customer, mark as free, and redirect to account home.
+    const { error: idError, customerId } = await getOrCreateCustomerId({
+      supabaseServiceRole,
+      user,
+    })
+    if (idError || !customerId) {
+      console.error("Error creating customer id for free plan", idError)
+      error(500, {
+        message: "Unknown error. If issue persists, please contact us.",
+      })
+    }
+
+    // Update our DB to reflect the free plan choice
+    const { error: updateError } = await supabaseServiceRole
+      .from("stripe_customers")
+      .update({ plan_id: "free_plan" })
+      .eq("user_id", user.id)
+
+    if (updateError) {
+      console.error("Error marking user as free plan", updateError)
+      error(500, {
+        message: "Unknown error. If issue persists, please contact us.",
+      })
+    }
+
     redirect(303, "/account")
   }
 

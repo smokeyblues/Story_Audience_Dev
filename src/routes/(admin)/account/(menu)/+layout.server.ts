@@ -67,12 +67,20 @@ export const load: LayoutServerLoad = async ({
     // Optional: Handle this error more gracefully, e.g., show a user-friendly message
   }
 
+  // Get our local copy of the stripe customer data
+  const { data: dbCustomer } = await supabase
+    .from("stripe_customers")
+    .select("plan_id")
+    .eq("user_id", user.id)
+    .single()
+
   const { primarySubscription, hasEverHadSubscription } =
     await fetchSubscription({
       customerId: customerId || "", // Use the fetched customer ID
     })
 
   const allowedPaths = [
+    "/account",
     "/account/billing",
     "/account/select_plan",
     "/account/subscribe/free_plan",
@@ -80,6 +88,7 @@ export const load: LayoutServerLoad = async ({
   ]
   if (
     !primarySubscription &&
+    dbCustomer?.plan_id !== "free_plan" &&
     !allowedPaths.some((p) => url.pathname.startsWith(p))
   ) {
     redirect(303, "/account/select_plan")
@@ -153,7 +162,7 @@ function _hasFullProfile(
 ) {
   if (!profile) return false
   if (!profile.full_name) return false
-  if (!profile.company_name) return false
-  if (!profile.website) return false
+  // if (!profile.company_name) return false
+  // if (!profile.website) return false
   return true
 }

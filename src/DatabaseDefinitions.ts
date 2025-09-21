@@ -242,16 +242,19 @@ export type Database = {
       }
       stripe_customers: {
         Row: {
+          plan_id: string | null
           stripe_customer_id: string | null
           updated_at: string | null
           user_id: string
         }
         Insert: {
+          plan_id?: string | null
           stripe_customer_id?: string | null
           updated_at?: string | null
           user_id: string
         }
         Update: {
+          plan_id?: string | null
           stripe_customer_id?: string | null
           updated_at?: string | null
           user_id?: string
