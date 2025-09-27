@@ -49,7 +49,7 @@
           Welcome, {data.profile?.full_name ?? data.user?.email ?? "User"}!
         </h1>
         <p class="py-6">
-          Ready to develop your transmedia project?
+          Ready to build your universe?
           <br /><br />
           Here we begin with world building, then we create characters that live
           in that world, before finally developing the stories that your characters
