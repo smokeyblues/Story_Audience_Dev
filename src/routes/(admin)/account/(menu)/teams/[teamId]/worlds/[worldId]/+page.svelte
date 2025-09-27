@@ -177,31 +177,80 @@
   <h1 class="text-2xl font-bold">World: {data.world?.name}</h1>
   <!-- Interactive Map -->
   <section class="card p-4">
-    <h2 class="text-2xl font-bold mb-4">World Map</h2>
+    <div class="flex justify-between items-center mb-4">
+      <h2 class="text-2xl font-bold">World Map</h2>
+      {#if data.world?.map_image_url}
+        <form
+          method="POST"
+          action="?/toggleMapType"
+          use:enhance
+          class="flex items-center"
+        >
+          <input
+            type="hidden"
+            name="current_map_type"
+            value={data.world.map_type}
+          />
+          <button type="submit" class="btn btn-sm">
+            {#if data.world.map_type === "custom_image"}
+              Switch to OpenStreetMap
+            {:else}
+              Switch to Custom Map
+            {/if}
+          </button>
+        </form>
+      {/if}
+    </div>
     <InteractiveMap
       mapImageUrl={data.world?.map_image_url ?? null}
+      mapType={data.world?.map_type}
       elements={data.elements}
       editable={true}
     />
   </section>
 
   <section class="card p-4 mt-6">
-    <h2 class="text-2xl font-bold mb-4">Upload World Map</h2>
-    <form method="POST" action="?/uploadMap" enctype="multipart/form-data">
-      <div class="form-control w-full max-w-xs">
-        <label class="label" for="map-upload">
-          <span class="label-text">Select map image</span>
-        </label>
-        <input
-          id="map-upload"
-          name="mapImage"
-          type="file"
-          class="file-input file-input-bordered w-full max-w-xs"
-          required
-        />
+    <h2 class="text-2xl font-bold mb-4">Manage Map</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <h3 class="text-lg font-semibold">Upload New Map</h3>
+        <form
+          method="POST"
+          action="?/uploadMap"
+          enctype="multipart/form-data"
+          class="mt-2"
+        >
+          <div class="form-control w-full max-w-xs">
+            <label class="label" for="map-upload">
+              <span class="label-text">Select map image</span>
+            </label>
+            <input
+              id="map-upload"
+              name="mapImage"
+              type="file"
+              class="file-input file-input-bordered w-full max-w-xs"
+              required
+            />
+          </div>
+          <button type="submit" class="btn btn-primary mt-4">Upload</button>
+        </form>
       </div>
-      <button type="submit" class="btn btn-primary mt-4">Upload</button>
-    </form>
+
+      {#if data.world?.map_image_url}
+        <div>
+          <h3 class="text-lg font-semibold">Remove Custom Map</h3>
+          <p class="text-sm text-gray-600 mt-2">
+            This will remove your custom map and switch back to OpenStreetMap.
+            Your custom map markers will be hidden but not deleted.
+          </p>
+          <form method="POST" action="?/removeMap" use:enhance class="mt-4">
+            <button type="submit" class="btn btn-error"
+              >Remove Custom Map</button
+            >
+          </form>
+        </div>
+      {/if}
+    </div>
   </section>
 
   <!-- Section for Adding New Elements -->

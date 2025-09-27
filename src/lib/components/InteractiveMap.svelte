@@ -1,11 +1,13 @@
 <script lang="ts">
   import { onMount, onDestroy, createEventDispatcher } from "svelte"
   import type { Map as LeafletMap, LayerGroup, DivIcon } from "leaflet"
+  import type * as Leaflet from "leaflet"
   import type { Tables } from "../../DatabaseDefinitions"
   import { page } from "$app/stores"
 
   // --- PROPS ---
   export let mapImageUrl: string | null | undefined
+  export let mapType: "openstreetmap" | "custom_image" = "custom_image"
   export let elements: Tables<"elements">[] = []
   export let editable = false // Is the map in an editable state?
   export let singleMarkerLocation: { lat: number; lng: number } | null = null
@@ -17,6 +19,29 @@
   let markersLayer: LayerGroup
 
   const dispatch = createEventDispatcher()
+
+  // --- NEW: Filter elements based on map type ---
+  $: filteredElements = elements.filter((element) => {
+    if (
+      !element.properties ||
+      typeof element.properties !== "object" ||
+      !("latitude" in element.properties) ||
+      !("longitude" in element.properties)
+    ) {
+      return false // Don't show elements without coordinates
+    }
+
+    const props = element.properties as { coordinate_system?: string }
+    const coordinateSystem = props.coordinate_system
+
+    if (mapType === "custom_image") {
+      return coordinateSystem === "pixel"
+    }
+    if (mapType === "openstreetmap") {
+      return coordinateSystem === "geographic"
+    }
+    return false
+  })
 
   // --- ICON DEFINITIONS ---
   const iconDefs = {
@@ -57,78 +82,135 @@
     })
   }
 
+  function initializeOpenStreetMap(L: typeof Leaflet) {
+    map = L.map(mapContainer, {
+      zoomSnap: 0.1,
+      attributionControl: true,
+    })
+
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    }).addTo(map)
+
+    const defaultCenter: [number, number] = [51.505, -0.09] // Default to London
+    const defaultZoom = initialCenter ? 13 : 3
+
+    if (initialCenter) {
+      map.setView([initialCenter.lat, initialCenter.lng], defaultZoom)
+    } else {
+      map.setView(defaultCenter, defaultZoom)
+    }
+
+    markersLayer = L.layerGroup().addTo(map)
+    filteredElements.forEach(addMarkerForElement)
+
+    if (editable) {
+      setupEditableMode()
+    } else {
+      // Handle single marker for non-editable OSM map
+      if (
+        singleMarkerLocation &&
+        singleMarkerLocation.lat &&
+        singleMarkerLocation.lng
+      ) {
+        const marker = L.marker(
+          [singleMarkerLocation.lat, singleMarkerLocation.lng],
+          {
+            icon: getIconForElement("Location"),
+          },
+        ).addTo(markersLayer)
+
+        if (singleMarkerElementName) {
+          const popupContent = `
+						<div style="font-family: sans-serif; text-align: center;">
+							<b style="font-size: 1.1em;">${singleMarkerElementName}</b>
+						</div>
+					`
+          marker.bindPopup(popupContent).openPopup()
+        }
+      }
+    }
+  }
+
+  function initializeCustomMap(L: typeof Leaflet) {
+    if (!mapImageUrl) return // Type guard
+
+    map = L.map(mapContainer, {
+      crs: L.CRS.Simple,
+      zoomSnap: 0.1,
+      maxBoundsViscosity: 1.0,
+      attributionControl: false,
+    })
+
+    const img = new Image()
+    img.src = mapImageUrl!
+    img.onload = () => {
+      const bounds: [[number, number], [number, number]] = [
+        [0, 0],
+        [img.height, img.width],
+      ]
+      L.imageOverlay(mapImageUrl, bounds).addTo(map)
+
+      const defaultCenter = [img.height / 2, img.width / 2] as [number, number]
+      const fitZoom = map.getBoundsZoom(L.latLngBounds(bounds), true)
+
+      // --- MODIFIED: Use initialCenter if provided ---
+      if (initialCenter) {
+        map.setView([initialCenter.lat, initialCenter.lng], fitZoom + 2) // Zoom in a bit more
+      } else {
+        map.setView(defaultCenter, fitZoom)
+      }
+
+      map.setMinZoom(fitZoom - 2.5)
+      map.setMaxZoom(fitZoom + 4)
+      map.setMaxBounds(bounds)
+
+      markersLayer = L.layerGroup().addTo(map)
+      filteredElements.forEach(addMarkerForElement)
+
+      if (editable) {
+        setupEditableMode()
+      } else {
+        // If a single location is provided in non-editable mode, show it as a static marker
+        if (
+          singleMarkerLocation &&
+          singleMarkerLocation.lat &&
+          singleMarkerLocation.lng
+        ) {
+          const L = window.L
+          const marker = L.marker(
+            [singleMarkerLocation.lat, singleMarkerLocation.lng],
+            {
+              icon: getIconForElement("Location"),
+            },
+          ).addTo(markersLayer)
+
+          // --- NEW: Add popup for the single marker ---
+          if (singleMarkerElementName) {
+            const popupContent = `
+								<div style="font-family: sans-serif; text-align: center;">
+									<b style="font-size: 1.1em;">${singleMarkerElementName}</b>
+								</div>
+							`
+            marker.bindPopup(popupContent).openPopup()
+          }
+        }
+      }
+    }
+  }
+
   onMount(async () => {
     if (typeof window !== "undefined") {
       const L = (await import("leaflet")).default
       window.L = L // Make it globally available for icon function
       await import("leaflet/dist/leaflet.css")
 
-      if (mapImageUrl) {
-        map = L.map(mapContainer, {
-          crs: L.CRS.Simple,
-          zoomSnap: 0.1,
-          maxBoundsViscosity: 1.0,
-          attributionControl: false,
-        })
-
-        const img = new Image()
-        img.src = mapImageUrl
-        img.onload = () => {
-          const bounds: [[number, number], [number, number]] = [
-            [0, 0],
-            [img.height, img.width],
-          ]
-          L.imageOverlay(mapImageUrl, bounds).addTo(map)
-
-          const defaultCenter = [img.height / 2, img.width / 2] as [
-            number,
-            number,
-          ]
-          const fitZoom = map.getBoundsZoom(L.latLngBounds(bounds), true)
-
-          // --- MODIFIED: Use initialCenter if provided ---
-          if (initialCenter) {
-            map.setView([initialCenter.lat, initialCenter.lng], fitZoom + 2) // Zoom in a bit more
-          } else {
-            map.setView(defaultCenter, fitZoom)
-          }
-
-          map.setMinZoom(fitZoom - 2.5)
-          map.setMaxZoom(fitZoom + 4)
-          map.setMaxBounds(bounds)
-
-          markersLayer = L.layerGroup().addTo(map)
-          elements.forEach(addMarkerForElement)
-
-          if (editable) {
-            setupEditableMode()
-          } else {
-            // If a single location is provided in non-editable mode, show it as a static marker
-            if (
-              singleMarkerLocation &&
-              singleMarkerLocation.lat &&
-              singleMarkerLocation.lng
-            ) {
-              const L = window.L
-              const marker = L.marker(
-                [singleMarkerLocation.lat, singleMarkerLocation.lng],
-                {
-                  icon: getIconForElement("Location"),
-                },
-              ).addTo(markersLayer)
-
-              // --- NEW: Add popup for the single marker ---
-              if (singleMarkerElementName) {
-                const popupContent = `
-								<div style="font-family: sans-serif; text-align: center;">
-									<b style="font-size: 1.1em;">${singleMarkerElementName}</b>
-								</div>
-							`
-                marker.bindPopup(popupContent).openPopup()
-              }
-            }
-          }
-        }
+      if (mapType === "custom_image" && mapImageUrl) {
+        initializeCustomMap(L)
+      } else {
+        // Default to OpenStreetMap if no custom map is provided or type is explicitly set
+        initializeOpenStreetMap(L)
       }
     }
   })

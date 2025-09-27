@@ -130,6 +130,20 @@ export const actions: Actions = {
     if (latitude && longitude) {
       properties.latitude = parseFloat(latitude)
       properties.longitude = parseFloat(longitude)
+      // --- New logic for coordinate system ---
+      // Fetch the world's current map_type to correctly tag the coordinates
+      const { data: world, error: worldError } = await supabase
+        .from("worlds")
+        .select("map_type")
+        .eq("id", worldId)
+        .single()
+
+      if (worldError || !world) {
+        return fail(500, { error: "Could not verify world map type." })
+      }
+      properties.coordinate_system =
+        world.map_type === "custom_image" ? "pixel" : "geographic"
+      // --- End of new logic ---
     }
 
     // Create the element

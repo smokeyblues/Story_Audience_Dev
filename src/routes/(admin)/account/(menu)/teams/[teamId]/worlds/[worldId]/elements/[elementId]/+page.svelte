@@ -332,12 +332,13 @@
   </div>
 
   <!-- NEW: Map Display Section -->
-  {#if data.world.map_image_url && singleMarkerLocation}
+  {#if singleMarkerLocation}
     <div class="card p-4">
       <h2 class="text-xl font-bold mb-4">Location</h2>
       <div class="rounded-lg overflow-hidden shadow-lg" style="height: 400px;">
         <InteractiveMap
           mapImageUrl={data.world.map_image_url}
+          mapType={data.world.map_type}
           elements={data.worldElements}
           editable={false}
           {singleMarkerLocation}

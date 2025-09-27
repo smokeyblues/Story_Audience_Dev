@@ -67,6 +67,7 @@ export const load: PageServerLoad = async ({
                 created_at,
                 description,
                 map_image_url,
+                map_type,
                 updated_at
             )
         `,

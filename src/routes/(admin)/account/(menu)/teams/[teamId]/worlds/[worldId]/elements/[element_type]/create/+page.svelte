@@ -165,13 +165,14 @@
     <div class="card-body">
       <h2>Element Details</h2>
 
-      {#if lat && lng && data.world.map_image_url}
+      {#if lat && lng}
         <div class="my-4 rounded-lg overflow-hidden border border-surface-300">
           <p class="p-4 bg-surface-100 text-sm">
             📍 Placing new element at the selected map coordinates.
           </p>
           <InteractiveMap
             mapImageUrl={data.world.map_image_url}
+            mapType={data.world.map_type}
             editable={false}
             singleMarkerLocation={{
               lat: parseFloat(lat),

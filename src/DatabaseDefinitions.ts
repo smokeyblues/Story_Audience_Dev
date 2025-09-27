@@ -716,6 +716,7 @@ export type Database = {
           description: string | null
           id: string
           map_image_url: string | null
+          map_type: Database["public"]["Enums"]["map_type_enum"]
           name: string
           team_id: string
           updated_at: string
@@ -725,6 +726,7 @@ export type Database = {
           description?: string | null
           id?: string
           map_image_url?: string | null
+          map_type?: Database["public"]["Enums"]["map_type_enum"]
           name: string
           team_id: string
           updated_at?: string
@@ -734,6 +736,7 @@ export type Database = {
           description?: string | null
           id?: string
           map_image_url?: string | null
+          map_type?: Database["public"]["Enums"]["map_type_enum"]
           name?: string
           team_id?: string
           updated_at?: string
@@ -789,6 +792,7 @@ export type Database = {
     }
     Enums: {
       invitation_status: "pending" | "accepted" | "declined"
+      map_type_enum: "openstreetmap" | "custom_image"
       team_role:
         | "owner"
         | "admin"
@@ -925,6 +929,7 @@ export const Constants = {
   public: {
     Enums: {
       invitation_status: ["pending", "accepted", "declined"],
+      map_type_enum: ["openstreetmap", "custom_image"],
       team_role: [
         "owner",
         "admin",

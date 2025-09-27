@@ -169,7 +169,10 @@ export const actions: Actions = {
     // 3. Update the worlds table with the new URL
     const { error: dbError } = await supabase
       .from("worlds")
-      .update({ map_image_url: urlData.publicUrl as string }) // Use a valid column, e.g., 'description'
+      .update({
+        map_image_url: urlData.publicUrl as string,
+        map_type: "custom_image",
+      }) // Use a valid column, e.g., 'description'
       .eq("id", params.worldId)
 
     if (dbError) {
@@ -180,6 +183,50 @@ export const actions: Actions = {
     }
 
     return { success: true, mapUrl: urlData.publicUrl }
+  },
+
+  toggleMapType: async ({ request, locals: { supabase }, params }) => {
+    const formData = await request.formData()
+    const currentMapType = formData.get("current_map_type")?.toString()
+
+    const newMapType =
+      currentMapType === "custom_image" ? "openstreetmap" : "custom_image"
+
+    const { error } = await supabase
+      .from("worlds")
+      .update({ map_type: newMapType })
+      .eq("id", params.worldId)
+
+    if (error) {
+      return fail(500, {
+        action: "toggleMapType",
+        error: "Failed to switch map type.",
+        details: error.message,
+      })
+    }
+
+    return { action: "toggleMapType", success: true }
+  },
+
+  removeMap: async ({ locals: { supabase }, params }) => {
+    // 1. We don't delete the file from storage, just decouple it
+    const { error } = await supabase
+      .from("worlds")
+      .update({
+        map_image_url: null,
+        map_type: "openstreetmap",
+      })
+      .eq("id", params.worldId)
+
+    if (error) {
+      return fail(500, {
+        action: "removeMap",
+        error: "Failed to remove custom map.",
+        details: error.message,
+      })
+    }
+
+    return { action: "removeMap", success: true }
   },
 
   // NEW, UPDATED VERSION
@@ -199,6 +246,32 @@ export const actions: Actions = {
         }
       }
     }
+
+    // --- New logic for coordinate system ---
+    const latitude = formData.get("latitude")
+    const longitude = formData.get("longitude")
+
+    if (latitude && longitude) {
+      // Fetch the world's current map_type
+      const { data: world, error: worldError } = await supabase
+        .from("worlds")
+        .select("map_type")
+        .eq("id", worldId)
+        .single()
+
+      if (worldError) {
+        return fail(500, {
+          error: "Could not verify world map type.",
+          details: worldError.message,
+        })
+      }
+
+      properties["latitude"] = parseFloat(latitude as string)
+      properties["longitude"] = parseFloat(longitude as string)
+      properties["coordinate_system"] =
+        world.map_type === "custom_image" ? "pixel" : "geographic"
+    }
+
     // --- End of new logic ---
 
     if (!name || !type) {

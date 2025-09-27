@@ -12,7 +12,7 @@ export const load: PageServerLoad = async ({
   // --- NEW: Fetch the world data ---
   const { data: world, error: worldError } = await supabase
     .from("worlds")
-    .select("id, name, map_image_url")
+    .select("id, name, map_image_url, map_type")
     .eq("id", worldId)
     .single()
 
