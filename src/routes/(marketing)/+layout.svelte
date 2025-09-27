@@ -94,7 +94,7 @@
       <a class="link link-hover my-1" href="/terms-of-service"
         >Terms of Service</a
       >
-      <a class="link link-hover my-1" href="/privacy-policy">Privacy Policy </a>
+      <a class="link link-hover my-1" href="/privacy-policy">Privacy Policy</a>
     </aside>
   </footer>
 </div>
