@@ -11,20 +11,6 @@ const config = {
     // allow up to 150kb of style to be inlined with the HTML
     // Faster FCP (First Contentful Paint) by reducing the number of requests
     inlineStyleThreshold: 150000,
-    csp: {
-      directives: {
-        "script-src": ["self", "unsafe-eval", "https://*.posthog.com"],
-        "style-src": ["self", "unsafe-inline", "https://fonts.googleapis.com"],
-        "img-src": [
-          "self",
-          "data:",
-          "https://maps.wikimedia.org",
-          "https://*.posthog.com",
-        ],
-        "font-src": ["self", "https://fonts.gstatic.com"],
-        "connect-src": ["self", "https://*.posthog.com"],
-      },
-    },
   },
   preprocess: vitePreprocess(),
 }

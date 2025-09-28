@@ -85,16 +85,16 @@
   function initializeOpenStreetMap(L: typeof Leaflet) {
     map = L.map(mapContainer, {
       zoomSnap: 0.1,
-      attributionControl: true,
+      attributionControl: false,
     })
 
     // The default OpenStreetMap tile server renders labels in the local language.
     // To provide a better experience for English-speaking users, we can use a different
     // tile server that provides English labels.
     // The Wikimedia tile server is a good free option with international language support.
-    L.tileLayer("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png", {
+    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
     }).addTo(map)
 
     const defaultCenter: [number, number] = [51.505, -0.09] // Default to London
