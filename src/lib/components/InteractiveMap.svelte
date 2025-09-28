@@ -88,17 +88,60 @@
       attributionControl: true,
     })
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    // The default OpenStreetMap tile server renders labels in the local language.
+    // To provide a better experience for English-speaking users, we can use a different
+    // tile server that provides English labels.
+    // The Wikimedia tile server is a good free option with international language support.
+    L.tileLayer("https://maps.wikimedia.org/osm-intl/{z}/{x}/{y}.png", {
       attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors, <a href="https://wikimediafoundation.org/wiki/Maps_Terms_of_Use">Wikimedia</a>',
     }).addTo(map)
 
     const defaultCenter: [number, number] = [51.505, -0.09] // Default to London
-    const defaultZoom = initialCenter ? 13 : 3
+    const defaultZoom = 3
+    const regionalZoom = 7
 
-    if (initialCenter) {
-      map.setView([initialCenter.lat, initialCenter.lng], defaultZoom)
+    // Prioritize fitting markers if they exist
+    if (filteredElements.length > 0) {
+      const markerPoints = filteredElements
+        .map((element) => {
+          if (
+            element.properties &&
+            typeof element.properties === "object" &&
+            "latitude" in element.properties &&
+            "longitude" in element.properties
+          ) {
+            const { latitude, longitude } = element.properties as {
+              latitude: number
+              longitude: number
+            }
+            return L.latLng(latitude, longitude)
+          }
+          return null
+        })
+        .filter((p): p is L.LatLng => p !== null)
+
+      if (markerPoints.length > 0) {
+        const bounds = L.latLngBounds(markerPoints)
+        map.fitBounds(bounds, { padding: [50, 50] })
+      }
+    } else if (initialCenter) {
+      map.setView([initialCenter.lat, initialCenter.lng], 13)
+    } else if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          map.setView(
+            [position.coords.latitude, position.coords.longitude],
+            regionalZoom,
+          )
+        },
+        () => {
+          // Geolocation failed, use default
+          map.setView(defaultCenter, defaultZoom)
+        },
+      )
     } else {
+      // Browser doesn't support Geolocation, use default
       map.setView(defaultCenter, defaultZoom)
     }
 
