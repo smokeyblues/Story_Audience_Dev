@@ -12,206 +12,137 @@
     creatorIncluded?: boolean
     producerString?: string
     producerIncluded?: boolean
-    studioString?: string
-    studioIncluded?: boolean
-    partnerString?: string
-    partnerIncluded?: boolean
+    epString?: string
+    epIncluded?: boolean
   }
 
-  // --- REVISED FEATURE TABLE ---
+  // --- NEW FEATURE TABLE ---
+  // This is completely rebuilt to match your new pricing_plans.ts
   const planFeatures: PlanFeatureRow[] = [
-    // --- IP Development Platform ---
-    { name: "IP Development Platform", header: true },
+    // --- Core Platform ---
+    { name: "Core Platform", header: true },
+    {
+      name: "Story Development Tools",
+      creatorIncluded: true,
+      producerIncluded: true,
+      epIncluded: true,
+      tooltip:
+        "Free, pro-level tools to build your world and validate your idea.",
+    },
+    {
+      name: "Community Discord Access",
+      creatorIncluded: true,
+      producerIncluded: true,
+      epIncluded: true,
+    },
     {
       name: "Projects",
-      creatorString: "1",
+      creatorString: "Unlimited", // <-- CHANGED
+      producerString: "Unlimited", // <-- CHANGED
+      epString: "Unlimited",
+    },
+
+    // --- Co-op Governance ---
+    { name: "Co-op Governance", header: true },
+    {
+      name: "Annual Fund Contribution",
+      creatorString: "—",
+      producerString: "$250",
+      epString: "$500",
+      tooltip: "The annual fee that fills the Production Fund.",
+    },
+    {
+      name: "Greenlight Votes",
+      creatorString: "—", // <-- CHANGED (Creators don't get a base vote)
       producerString: "5",
-      studioString: "Unlimited",
-      partnerString: "Unlimited",
+      epString: "10",
+      tooltip: "Votes you can cast on projects up for a greenlight vote.",
     },
     {
-      name: "Narrative Graph Engine",
-      creatorIncluded: true,
+      name: "Vote Splitting",
+      creatorIncluded: false,
       producerIncluded: true,
-      studioIncluded: true,
-      partnerIncluded: true,
-      tooltip:
-        "Structure your world, characters, and lore in a dynamic knowledge graph.",
-    },
-    {
-      name: "Team Members",
-      creatorString: "1 (Solo)",
-      producerString: "Up to 5",
-      studioString: "15+",
-      partnerString: "Custom",
-    },
-    {
-      name: "Asset Storage",
-      creatorString: "100 MB",
-      producerString: "1 GB",
-      studioString: "10 GB+",
-      partnerString: "Custom",
+      epIncluded: true,
+      tooltip: "Spread your votes across multiple projects you believe in.",
     },
 
-    // --- Audience Development ---
-    { name: "Audience Development", header: true },
+    // --- Studio Perks ---
+    { name: "Studio Perks", header: true },
     {
-      name: "Audience Touchpoint Planner",
-      creatorIncluded: false,
+      name: "Name featured in Credits",
+      creatorIncluded: true, // <-- CHANGED
       producerIncluded: true,
-      studioIncluded: true,
-      partnerIncluded: true,
+      epIncluded: true,
+      tooltip: "Get your name in the credits of every project.",
     },
     {
-      name: "Community Feedback Logging",
-      creatorIncluded: true,
+      name: "Potential IMDb Credit",
+      creatorIncluded: true, // <-- CHANGED
       producerIncluded: true,
-      studioIncluded: true,
-      partnerIncluded: true,
-    },
-    {
-      name: "Validated Audience Analytics (Future)",
-      creatorIncluded: false,
-      producerIncluded: false,
-      studioIncluded: true,
-      partnerIncluded: true,
-    },
-
-    // --- Production & Services ---
-    { name: "Production & Services", header: true },
-    {
-      name: "Professional Pitch Package Export",
-      creatorIncluded: false,
-      producerIncluded: true,
-      studioIncluded: true,
-      partnerIncluded: true,
-    },
-    {
-      name: "Priority Support",
-      creatorIncluded: false,
-      producerIncluded: false,
-      studioIncluded: true,
-      partnerIncluded: true,
-    },
-    {
-      name: "Executive Producer Services",
-      creatorIncluded: false,
-      producerIncluded: false,
-      studioIncluded: false,
-      partnerIncluded: true,
-      tooltip: "Bespoke production services for select projects.",
-    },
-    {
-      name: "Pitch Deck & Packaging Support",
-      creatorIncluded: false,
-      producerIncluded: false,
-      studioIncluded: false,
-      partnerIncluded: true,
-    },
-    {
-      name: "Financing & Distribution Strategy",
-      creatorIncluded: false,
-      producerIncluded: false,
-      studioIncluded: false,
-      partnerIncluded: true,
+      epIncluded: true,
+      tooltip: "For film & TV projects, we submit all members for credit.",
     },
   ]
 
-  let interval: "monthly" | "annual" = $state("annual")
-
-  // --- REVISED LOGIC TO ALWAYS INCLUDE 'creator' and 'production-partner' ---
-  const displayedPlans = $derived(
-    pricingPlans.filter((plan) => {
-      const idLower = plan.id.toLowerCase()
-      if (idLower === "creator" || idLower === "production-partner") return true
-
-      const isAnnual = idLower.includes("annual")
-      if (interval === "monthly") {
-        return !isAnnual
-      } else {
-        return isAnnual
-      }
-    }),
-  )
+  // --- **** THIS IS THE FIX **** ---
+  // We want to display ALL plans from pricing_plans.ts
+  const displayedPlans = pricingPlans
 </script>
 
 <svelte:head>
-  <title>Pricing - {WebsiteName}</title>
+  <title>Become a Producer - {WebsiteName}</title>
   <meta
     name="description"
-    content="Plans for the Nanowrit Labs story development platform and producer services."
+    content="Join the co-op. Fund the projects you want to see made."
   />
 </svelte:head>
 
 <div class="min-h-[70vh] pb-16 pt-[8vh] px-4 bg-base-100 text-base-content">
   <MetaTags
-    title={`Pricing - ${WebsiteName}`}
-    description={`From powerful IP development tools to full-service production, we have a plan to get your project made.`}
+    title={`Become a Producer - ${WebsiteName}`}
+    description={`Join the co-op. Fund the projects you want to see made.`}
   />
 
   <div class="text-center max-w-3xl mx-auto mb-12">
     <h1 class="text-4xl md:text-5xl font-bold mb-4">
-      Find the Right Partnership
+      Join the Greenlight Committee
     </h1>
     <p class="text-lg md:text-xl text-base-content/80">
-      From powerful IP development tools to full-service production, we have a
-      plan to help you get your project made. All plans start with a free
-      Creator account.
+      Your annual subscription isn't a fee—it's your contribution to the
+      Production Fund and the power to vote on what we make next.
     </p>
-  </div>
-
-  <div class="flex justify-center items-center space-x-4 mb-12">
-    <span
-      class={interval === "monthly"
-        ? "font-semibold text-primary"
-        : "text-base-content/70"}>Monthly</span
-    >
-    <input
-      type="checkbox"
-      class="toggle toggle-primary toggle-lg"
-      checked={interval === "annual"}
-      onchange={() =>
-        (interval = interval === "monthly" ? "annual" : "monthly")}
-      aria-label="Toggle Annual Pricing"
-    />
-    <span
-      class={interval === "annual"
-        ? "font-semibold text-primary"
-        : "text-base-content/70"}>Annual</span
-    >
-    <span class="badge badge-primary badge-outline ml-2">Save ~17%</span>
   </div>
 
   <div class="w-full max-w-7xl mx-auto my-8">
     <PricingModule
       plansToDisplay={displayedPlans}
       callToAction="Select Plan"
-      highlightedPlanId="producer"
+      highlightedPlanId="producer_annual"
       center={true}
     />
   </div>
 
   <div class="max-w-6xl mx-auto mt-24">
     <h1 class="text-3xl font-bold text-center mb-4">Feature Comparison</h1>
-    <p class="text-center text-base-content/70 mb-8">How the plans stack up.</p>
+    <p class="text-center text-base-content/70 mb-8">
+      How the tiers stack up. All paid plans are billed annually.
+    </p>
 
     <div class="overflow-x-auto shadow-md rounded-lg">
       <table class="table w-full text-sm">
         <thead class="text-base bg-base-200 sticky top-0 z-10 backdrop-blur-sm">
           <tr>
-            <th class="w-1/4">Feature</th>
-            <th class="text-center w-1/4"
+            <th class="w-2/5">Feature</th>
+            <th class="text-center w-1/5"
               >Creator<br /><span class="text-xs font-normal">(Free)</span></th
             >
-            <th class="text-center w-1/4 text-primary"
-              >Producer<br /><span class="text-xs font-normal">(Paid)</span></th
+            <th class="text-center w-1/5 text-primary"
+              >Producer<br /><span class="text-xs font-normal">($250/yr)</span
+              ></th
             >
-            <th class="text-center w-1/4 text-secondary"
-              >Studio<br /><span class="text-xs font-normal">(Paid+)</span></th
-            >
-            <th class="text-center w-1/4 text-accent"
-              >Production Partner<br /><span class="text-xs font-normal"
-                >(Services)</span
+            <th class="text-center w-1/5 text-secondary"
+              >Executive Producer<br /><span class="text-xs font-normal"
+                >($500/yr)</span
               ></th
             >
           </tr>
@@ -221,7 +152,7 @@
             {#if feature.header}
               <tr class="bg-base-300 font-semibold text-base">
                 <td
-                  colspan="5"
+                  colspan="4"
                   class={i === 0 ? "pt-4 pb-2" : "mt-2 pt-4 pb-2"}
                 >
                   {feature.name}
@@ -291,30 +222,11 @@
                   {/if}
                 </td>
                 <td class="text-center py-3">
-                  {#if feature.studioString}
+                  {#if feature.epString}
                     <span class="font-medium text-secondary"
-                      >{feature.studioString}</span
+                      >{feature.epString}</span
                     >
-                  {:else if feature.studioIncluded}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-6 h-6 mx-auto inline text-success"
-                      ><use href="#checkcircle" /></svg
-                    >
-                  {:else}
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      class="w-5 h-5 mx-auto inline text-base-300"
-                      ><use href="#nocircle" /></svg
-                    >
-                  {/if}
-                </td>
-                <td class="text-center py-3">
-                  {#if feature.partnerString}
-                    <span class="font-medium text-accent"
-                      >{feature.partnerString}</span
-                    >
-                  {:else if feature.partnerIncluded}
+                  {:else if feature.epIncluded}
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
                       class="w-6 h-6 mx-auto inline text-success"
@@ -341,37 +253,45 @@
       Frequently Asked Questions
     </h1>
     <div class="join join-vertical w-full shadow-md rounded-lg">
-      <div class="collapse collapse-arrow join-item border border-base-300">
+      <!-- <div class="collapse collapse-arrow join-item border border-base-300">
         <input type="radio" name="faq-accordion" id="faq-1" checked />
         <label
           for="faq-1"
           class="collapse-title text-lg font-medium cursor-pointer"
         >
-          What are the limits of the Free 'Creator' plan?
+          How does {WebsiteName} make money?
         </label>
         <div class="collapse-content bg-base-200/50">
           <p>
-            The Creator plan is designed to get you started. It includes our
-            core world-building tools for <strong>1 project</strong>, allows
-            <strong>1 team member</strong>
-            (solo creator), and provides <strong>100MB</strong> of asset storage.
-            You also get full access to our Discord community.
+            We believe in 100% transparency. Our studio is funded in two ways:
           </p>
+          <ul class="list-disc pl-6 space-y-2 mt-2">
+            <li>
+              <strong>Platform Fee:</strong> 10% of all incoming subscriptions is
+              used to fund our platform operations, development, and staff.
+            </li>
+            <li>
+              <strong>Project Revenue Share:</strong> When a project is successful,
+              it shares 50% of its revenue back—half of that (25% of the total) goes
+              to the platform, and the other half (25%) goes back into the Production
+              Fund.
+            </li>
+          </ul>
         </div>
-      </div>
+      </div> -->
       <div class="collapse collapse-arrow join-item border border-base-300">
         <input type="radio" name="faq-accordion" id="faq-2" />
         <label
           for="faq-2"
           class="collapse-title text-lg font-medium cursor-pointer"
         >
-          Can I change my plan later?
+          Where does my subscription fee go?
         </label>
         <div class="collapse-content bg-base-200/50">
           <p>
-            Absolutely! You can upgrade or downgrade between paid plans at any
-            time through your account settings. Changes take effect at the start
-            of your next billing cycle.
+            The vast majority—90%—of your annual subscription fee goes directly
+            into the collective Production Fund. The other 10% is our Platform
+            Fee (see above).
           </p>
         </div>
       </div>
@@ -381,17 +301,23 @@
           for="faq-3"
           class="collapse-title text-lg font-medium cursor-pointer"
         >
-          When will AI features be available?
+          What's the difference between Producer and Executive Producer?
         </label>
         <div class="collapse-content bg-base-200/50">
           <p>
-            AI Co-Pilots are a key part of our vision. We plan to roll out
-            initial AI integrations (like concept image generation) to our
-            Studio tier first. Check our <a
-              href="/roadmap"
-              class="link link-primary">Roadmap page</a
-            > for the latest updates.
+            Both tiers give you the power to vote and get production credits.
+            The difference is the scale of your influence:
           </p>
+          <ul class="list-disc pl-6 space-y-2 mt-2">
+            <li>
+              <strong>Producers ($250/yr)</strong> contribute $250 to the fund and
+              wield 5 Greenlight Votes.
+            </li>
+            <li>
+              <strong>Executive Producers ($500/yr)</strong> contribute $500 to the
+              fund and wield 10 Greenlight Votes.
+            </li>
+          </ul>
         </div>
       </div>
       <div class="collapse collapse-arrow join-item border border-base-300">
@@ -400,16 +326,13 @@
           for="faq-4"
           class="collapse-title text-lg font-medium cursor-pointer"
         >
-          What is the 'Production Partner' plan?
+          Can I upgrade from Producer to EP?
         </label>
         <div class="collapse-content bg-base-200/50">
           <p>
-            The Production Partner plan is our hands-on service offering. For
-            the most promising projects developed on our platform, our team
-            offers executive producer services. This can include everything from
-            refining your pitch and packaging your IP to helping you secure
-            financing and distribution. It's a true partnership designed to take
-            your project from our platform to the screen.
+            Yes! You can upgrade your tier at any time through your account
+            settings. You'll just pay the difference for the remainder of your
+            annual subscription and your vote count will be updated immediately.
           </p>
         </div>
       </div>
@@ -434,7 +357,7 @@
         <path
           d="M12,2A10,10,0,1,0,22,12,10,10,0,0,0,12,2Zm4,11H8a1,1,0,0,1,0-2h8a1,1,0,0,1,0,2Z"
         />
-      </symbol>
+      </symbol>Address: 1 1st Street, City, State 12345
     </defs>
   </svg>
 </div>

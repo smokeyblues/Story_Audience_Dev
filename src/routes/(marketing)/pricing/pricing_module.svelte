@@ -66,7 +66,7 @@
           {#if plan.price !== "Contact Us" && plan.id !== "creator"}
             <span class="text-base-content/60"
               >/{plan.priceIntervalName.includes("year")
-                ? "month (billed annually)"
+                ? "per year"
                 : "month"}</span
             >
           {:else if plan.price === "Contact Us"}
