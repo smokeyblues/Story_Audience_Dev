@@ -23,7 +23,7 @@ import {
 // }
 
 export const load: LayoutServerLoad = async ({
-  locals: { safeGetSession, supabase },
+  locals: { safeGetSession, supabase, supabaseServiceRole },
   url,
 }) => {
   // Check if we have a valid session using the server-side helper
@@ -58,7 +58,7 @@ export const load: LayoutServerLoad = async ({
 
   // Ensure every user has a Stripe customer ID
   const { error: idError, customerId } = await getOrCreateCustomerId({
-    supabaseServiceRole: supabase, // Use the server-side client
+    supabaseServiceRole: supabaseServiceRole, // Use the service role client
     user,
   })
 
