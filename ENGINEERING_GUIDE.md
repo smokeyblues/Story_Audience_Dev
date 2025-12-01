@@ -2,17 +2,20 @@
 
 ## 1. Project Overview
 
-Welcome to the engineering guide for our **transmedia development and management application**. This document is the primary resource for developers working on this codebase.
+Welcome to the engineering guide for **Nanowrit Labs**, a **Community-Greenlit Studio**. This document is the primary resource for developers working on this codebase.
 
 ### Purpose
 
-This application is designed to help creators develop and manage complex transmedia projects. It provides tools for world-building, story development, character management, and team collaboration.
+This application is a platform where **Creatives** develop and test ideas for free, and **Backers** (Producers & Executive Producers) fund a collective **Production Fund** via annual subscriptions. The core value proposition is the "Community Greenlight": Backers vote on which validated projects get funded and produced.
 
 ### Project History & Philosophy
 
-This project was originally forked from `CMSaasStarter`, a SvelteKit SaaS boilerplate. As a result, the codebase inherits a robust set of features and technical patterns, including user authentication, billing integration, and a serverless backend architecture using Supabase.
+This project was originally forked from `CMSaasStarter` and initially developed as a generic transmedia tool. We have since pivoted to the **Community-Greenlit Studio** model.
 
-While we have since pivoted to focus exclusively on building a dedicated transmedia tool, these underlying patterns remain. We leverage them to provide a stable, scalable, and feature-rich foundation for our application.
+While the underlying architecture (SvelteKit, Supabase, Stripe) remains the same, the focus is now on two distinct user journeys:
+
+1.  **Creatives:** Using the "World Building" and "Story Building" tools to create content and build an audience.
+2.  **Producers:** Using the "Dashboard" and "Billing" features to manage their subscriptions (which fuel the Production Fund) and cast "Greenlight Votes" on projects.
 
 ### How to Use This Guide
 
@@ -22,15 +25,14 @@ The original `README.md` is now partially outdated. It should **only** be used f
 
 ## 2. Core Application Features
 
-The core of this application is found within the user account section, accessible after logging in. This is where the transmedia development and management tools reside. The main features are organized into the following sections, which can be found as subdirectories within `src/routes/(admin)/account/`:
+The core of this application is found within the user account section (`src/routes/(admin)/account/`). Features are split between tools for Creatives and governance/funding features for Producers.
 
-- **Dashboard (`/account`):** The main landing page after login, providing an overview and quick access to various parts of the application.
-- **World Building (`/account/world-building`):** Tools and features for creating and managing the fictional worlds of a project.
-- **Story Building (`/account/story-building`):** Tools for developing narratives, plots, and timelines. This includes features for managing premises (`/account/premises`).
-- **Character Management (`/account/characters`):** A section for creating and managing character profiles, attributes, and relationships.
-- **Team Collaboration (`/account/teams`):** Features for managing teams, inviting members, and controlling access to projects.
-- **User Settings (`/account/settings`):** Standard account management features, including profile updates, changing passwords, and managing email subscriptions.
-- **Billing (`/account/billing`):** Subscription and payment management, powered by Stripe.
+- **Dashboard (`/account`):** The main hub. For Creatives, it tracks project stats. For Producers, it shows the status of the **Production Fund** and active **Greenlight Votes**.
+- **World & Story Building (`/account/world-building`, `/account/story-building`):** The "Free Tools" for Creatives to develop their IP.
+- **Premises & Pitches (`/account/premises`):** Where Creatives refine their concepts into pitch-ready projects for the community to vote on.
+- **Billing (`/account/billing`):** Manages the **Producer ($250/yr)** and **Executive Producer ($500/yr)** subscriptions. 90% of this revenue goes directly to the Production Fund.
+- **Team Collaboration (`/account/teams`):** Allows Creatives to form teams around a project.
+- **User Settings (`/account/settings`):** Profile management, including "Credits" preferences (how a user wants to be credited in produced works).
 
 ## 3. Codebase Architecture
 
@@ -83,6 +85,14 @@ We use Supabase's built-in Postgres database.
 
 - **Schema Migrations:** The database schema is managed via SQL migration files located in `supabase/migrations/`. To make a schema change, create a new `.sql` file in this directory and apply it to your local and production databases. The initial schema, which includes tables for `profiles` and `stripe_customers`, can be found in `database_migration.sql`.
 - **Database Access:** All database access should be performed on the server-side (in `+page.server.ts` or `+server.ts` files) using the Supabase client.
+
+### Graph Database Design
+
+To support the complex relationships in transmedia storytelling (e.g., "Character A _hates_ Character B" or "Location X _contains_ Item Y"), we implement a graph structure using relational tables:
+
+- **Nodes (`elements` table):** Every story element (Character, Location, Plot Point) is a row in the `elements` table. It stores the `type` (e.g., "character") and a JSONB `properties` column for flexible, schema-less data attributes.
+- **Edges (`relationships` table):** Connections between elements are stored in the `relationships` table. Each row represents a directed edge with a `source_element_id`, `target_element_id`, and a `type` (e.g., "parent_of", "located_in").
+- **Traversal:** We currently handle graph traversal at the application layer. For example, to find all characters in a location, we query the `relationships` table for edges where `target_element_id` matches the location's ID.
 
 ### Data Loading
 
