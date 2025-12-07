@@ -1,7 +1,10 @@
 <script lang="ts">
   import { enhance } from "$app/forms"
   import { tick } from "svelte"
-  import { supabase } from "$lib/supabaseClient" //
+  // import { supabase } from "$lib/supabaseClient" // Remove this import
+
+  let { data } = $props()
+  let supabase = $derived(data.supabase)
 
   // State for the chat
   let messages = $state([

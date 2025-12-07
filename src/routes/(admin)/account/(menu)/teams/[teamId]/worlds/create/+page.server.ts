@@ -1,8 +1,4 @@
 // src/routes/(admin)/account/(menu)/teams/[teamId]/worlds/create/+page.server.ts
-import {
-  PUBLIC_SUPABASE_ANON_KEY,
-  PUBLIC_SUPABASE_URL,
-} from "$env/static/public"
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 
@@ -28,10 +24,6 @@ export const load: PageServerLoad = async ({
 
   return {
     teamId: params.teamId,
-    // Pass keys for the client-side fetch if needed,
-    // though usually handled by existing layout data
-    supabaseUrl: PUBLIC_SUPABASE_URL,
-    supabaseKey: PUBLIC_SUPABASE_ANON_KEY,
   }
 }
 
