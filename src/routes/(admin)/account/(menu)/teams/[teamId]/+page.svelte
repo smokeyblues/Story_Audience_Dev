@@ -439,7 +439,3 @@
 {/if}
 
 <!-- *** END: Invite Member Modal *** -->
-
-<style>
-  /* Optional: Add any custom styles if needed */
-</style>
