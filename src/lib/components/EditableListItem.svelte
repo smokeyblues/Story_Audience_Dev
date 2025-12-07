@@ -86,7 +86,7 @@
     <div class="flex flex-col md:flex-row justify-between items-start gap-2">
       <!-- Display the correct field dynamically -->
       <p class="whitespace-pre-wrap flex-1 py-1">{item[field]}</p>
-      <div class="flex gap-1 flex-shrink-0 self-end md:self-center">
+      <div class="flex gap-1 shrink-0 self-end md:self-center">
         <button
           onclick={handleEditClick}
           class="btn btn-xs btn-ghost opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity"
