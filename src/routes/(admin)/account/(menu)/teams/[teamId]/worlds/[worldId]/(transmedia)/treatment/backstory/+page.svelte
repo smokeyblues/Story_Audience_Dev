@@ -11,6 +11,7 @@
 
   // Bind the editor's value directly to the data from the load function.
   // Svelte's reactivity will handle keeping it in sync.
+  // svelte-ignore state_referenced_locally
   let backstoryContent = $state(data.treatment.backstory_context ?? "")
 
   $effect(() => {

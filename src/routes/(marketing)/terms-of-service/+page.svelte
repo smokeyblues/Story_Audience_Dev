@@ -268,14 +268,14 @@
             without acknowledgment or compensation to you.
           </p>
           <p class="mt-4">
-            <strong>Contributions:</strong> The Services may invite you to chat,
-            contribute to, or participate in blogs, message boards, online forums,
-            and other functionality during which you may create, submit, post, display,
-            transmit, publish, distribute, or broadcast content and materials to
-            us or through the Services... You are solely responsible for your Submissions
-            and/or Contributions and you expressly agree to reimburse us for any
-            and all losses that we may suffer because of your breach of (a) this
-            section, (b) any third party’s intellectual property rights, or (c) applicable
+            <strong>Contributions:</strong> The Services may invite you to chat, contribute
+            to, or participate in blogs, message boards, online forums, and other
+            functionality during which you may create, submit, post, display, transmit,
+            publish, distribute, or broadcast content and materials to us or through
+            the Services... You are solely responsible for your Submissions and/or
+            Contributions and you expressly agree to reimburse us for any and all
+            losses that we may suffer because of your breach of (a) this section,
+            (b) any third party’s intellectual property rights, or (c) applicable
             law.
           </p>
         </section>

@@ -25,6 +25,7 @@
 
   let editing = $state(false)
   // Use the 'field' prop to dynamically get the initial value
+  // svelte-ignore state_referenced_locally
   let editedDescription = $state(item[field])
   let isDeleting = $state(false)
   let isSaving = $state(false)

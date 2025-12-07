@@ -18,9 +18,9 @@
       <section class="mb-8">
         <p>
           This Privacy Notice for <strong>Nanowrit Labs, Inc</strong> ("we," "us,"
-          or "our"), describes how and why we might access, collect, store, use,
-          and/or share ("process") your personal information when you use our services
-          ("Services"), including when you:
+          or "our"), describes how and why we might access, collect, store, use, and/or
+          share ("process") your personal information when you use our services ("Services"),
+          including when you:
         </p>
         <ul class="list-disc list-inside my-4 pl-4 space-y-2">
           <li>
@@ -70,9 +70,9 @@
             do not collect any information from third parties.
           </li>
           <li>
-            <strong>How do we process your information?</strong> We process your
-            information to provide, improve, and administer our Services, communicate
-            with you, for security and fraud prevention, and to comply with law.
+            <strong>How do we process your information?</strong> We process your information
+            to provide, improve, and administer our Services, communicate with you,
+            for security and fraud prevention, and to comply with law.
           </li>
           <li>
             <strong
@@ -91,8 +91,8 @@
             may have certain rights regarding your personal information.
           </li>
           <li>
-            <strong>How do you exercise your rights?</strong> The easiest way is
-            by submitting a data subject access request or by contacting us.
+            <strong>How do you exercise your rights?</strong> The easiest way is by
+            submitting a data subject access request or by contacting us.
           </li>
         </ul>
       </section>
@@ -265,8 +265,8 @@
             <li>
               <strong>Log and Usage Data.</strong> Log and usage data is service-related,
               diagnostic, usage, and performance information our servers automatically
-              collect when you access or use our Services and which we record in
-              log files.
+              collect when you access or use our Services and which we record in log
+              files.
             </li>
             <li>
               <strong>Device Data.</strong> We collect device data such as information
@@ -320,12 +320,12 @@
             Information?
           </h2>
           <p>
-            <strong>In Short:</strong> We only process your personal information
-            when we believe it is necessary and we have a valid legal reason (i.e.,
-            legal basis) to do so under applicable law, like with your consent, to
-            comply with laws, to provide you with services to enter into or fulfill
-            our contractual obligations, to protect your rights, or to fulfill our
-            legitimate business interests.
+            <strong>In Short:</strong> We only process your personal information when
+            we believe it is necessary and we have a valid legal reason (i.e., legal
+            basis) to do so under applicable law, like with your consent, to comply
+            with laws, to provide you with services to enter into or fulfill our contractual
+            obligations, to protect your rights, or to fulfill our legitimate business
+            interests.
           </p>
           <p>
             We may rely on the following legal bases to process your personal
@@ -381,10 +381,10 @@
           </p>
           <ul class="list-disc list-inside my-4 pl-4 space-y-2">
             <li>
-              <strong>Business Transfers.</strong> We may share or transfer your
-              information in connection with, or during negotiations of, any merger,
-              sale of company assets, financing, or acquisition of all or a portion
-              of our business to another company.
+              <strong>Business Transfers.</strong> We may share or transfer your information
+              in connection with, or during negotiations of, any merger, sale of company
+              assets, financing, or acquisition of all or a portion of our business
+              to another company.
             </li>
             <li>
               <strong>Affiliates.</strong> We may share your information with our
@@ -418,12 +418,12 @@
           </h2>
           <p>
             <strong>In Short:</strong> If you choose to register or log in to our
-            Services using a social media account, we may have access to certain
-            information about you. Our Services offer you the ability to register
-            and log in using your third-party social media account details. Where
-            you choose to do this, we will receive certain profile information about
-            you from your social media provider. We will use the information we receive
-            only for the purposes that are described in this Privacy Notice.
+            Services using a social media account, we may have access to certain information
+            about you. Our Services offer you the ability to register and log in using
+            your third-party social media account details. Where you choose to do
+            this, we will receive certain profile information about you from your
+            social media provider. We will use the information we receive only for
+            the purposes that are described in this Privacy Notice.
           </p>
         </section>
 
@@ -437,8 +437,8 @@
             required by law. We will only keep your personal information for as long
             as it is necessary for the purposes set out in this Privacy Notice, unless
             a longer retention period is required or permitted by law. No purpose
-            in this notice will require us keeping your personal information for
-            longer than the period of time in which users have an account with us.
+            in this notice will require us keeping your personal information for longer
+            than the period of time in which users have an account with us.
           </p>
         </section>
 

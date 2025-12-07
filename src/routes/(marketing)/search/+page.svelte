@@ -21,6 +21,7 @@
   let loading = $state(true)
   let error = $state(false)
   onMount(async () => {
+    if (!browser) return
     try {
       const response = await fetch("/search/api.json")
       if (!response.ok) {

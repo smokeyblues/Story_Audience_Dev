@@ -39,7 +39,7 @@
         ? 'border-primary'
         : 'border-base-300'} shadow-lg flex flex-col w-full sm:w-[calc(50%-1.25rem)] lg:w-[calc(33.33%-1.8rem)] max-w-[340px] p-6"
     >
-      <div class="flex-grow">
+      <div class="grow">
         <div class="text-xl font-bold mb-2">{plan.name}</div>
         <p
           class="mt-1 text-sm text-base-content/80 leading-relaxed min-h-[60px]"

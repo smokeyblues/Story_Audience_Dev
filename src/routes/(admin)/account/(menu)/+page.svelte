@@ -51,9 +51,9 @@
         <p class="py-6">
           Ready to build your universe?
           <br /><br />
-          Here we begin with world building, then we create characters that live
-          in that world, before finally developing the stories that your characters
-          live through in your world.
+          Here we begin with world building, then we create characters that live in
+          that world, before finally developing the stories that your characters live
+          through in your world.
           <br /><br />
           In Nanowrit Labs, worlds live inside of teams. Create a team for your solo
           work or to collaborate with others.

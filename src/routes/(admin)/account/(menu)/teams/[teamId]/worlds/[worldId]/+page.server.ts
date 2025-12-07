@@ -291,4 +291,76 @@ export const actions: Actions = {
 
     return { success: true }
   },
+
+  updateElement: async ({ request, locals: { supabase }, params }) => {
+    const formData = await request.formData()
+    const elementId = formData.get("id") as string
+    const name = formData.get("name") as string
+    const type = formData.get("type") as string
+    const worldId = params.worldId
+
+    if (!elementId) {
+      return fail(400, { error: "Element ID is required for update." })
+    }
+
+    // --- New logic to handle dynamic properties ---
+    const properties: { [key: string]: Json } = {}
+    for (const [key, value] of formData.entries()) {
+      if (key.startsWith("prop_")) {
+        const propName = key.substring(5) // Remove the 'prop_' prefix
+        if (typeof value === "string") {
+          properties[propName] = value
+        }
+      }
+    }
+
+    // --- New logic for coordinate system ---
+    const latitude = formData.get("latitude")
+    const longitude = formData.get("longitude")
+
+    if (latitude && longitude) {
+      // Fetch the world's current map_type
+      const { data: world, error: worldError } = await supabase
+        .from("worlds")
+        .select("map_type")
+        .eq("id", worldId)
+        .single()
+
+      if (worldError) {
+        return fail(500, {
+          error: "Could not verify world map type.",
+          details: worldError.message,
+        })
+      }
+
+      properties["latitude"] = parseFloat(latitude as string)
+      properties["longitude"] = parseFloat(longitude as string)
+      properties["coordinate_system"] =
+        world.map_type === "custom_image" ? "pixel" : "geographic"
+    }
+
+    // Remove agent_suggestion flag if it exists (by not including it in the new object,
+    // assuming we are replacing the properties. If we were patching, we'd need to explicitly delete it.
+    // However, the form submits ALL properties, so this creates a fresh properties object.)
+
+    if (!name || !type) {
+      return fail(400, { error: "Name and type are required." })
+    }
+
+    const { error } = await supabase
+      .from("elements")
+      .update({
+        name,
+        type,
+        properties,
+      })
+      .eq("id", elementId)
+      .eq("world_id", worldId)
+
+    if (error) {
+      return fail(500, { error: "Server error. Please try again." })
+    }
+
+    return { success: true }
+  },
 }

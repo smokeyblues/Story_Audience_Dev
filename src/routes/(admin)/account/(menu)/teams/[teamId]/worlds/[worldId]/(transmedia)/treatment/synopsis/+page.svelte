@@ -8,6 +8,7 @@
 
   const form = $derived(($page as { form: ActionData }).form)
 
+  // svelte-ignore state_referenced_locally
   let synopsisContent = $state(data.treatment.synopsis ?? "")
 
   $effect(() => {

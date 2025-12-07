@@ -9,6 +9,7 @@
   const form = $derived(($page as { form: ActionData }).form)
 
   // Reactive state for the tagline, initialized from loaded data
+  // svelte-ignore state_referenced_locally
   let tagline = $state(data.treatment.tagline ?? "")
 
   $effect(() => {

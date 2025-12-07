@@ -7,6 +7,7 @@
 
   let { data, children } = $props()
 
+  // svelte-ignore state_referenced_locally
   let { supabase, session } = $state(data)
   $effect(() => {
     ;({ supabase, session } = data)

@@ -5,23 +5,18 @@
 
   let { data, form }: { data: PageData; form: ActionData } = $props()
   // Ensure pendingInvites is correctly typed based on the server load function change
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   type PendingInvite = Pick<
     PageData["pendingInvites"][number], // Infer from PageData if possible
     "id" | "invited_user_email" | "role" | "created_at"
   >
-  const {
-    team,
-    members,
-    isOwner,
-    pendingInvites,
-  }: {
-    team: PageData["team"]
-    members: PageData["members"]
-    isOwner: PageData["isOwner"]
-    pendingInvites: PendingInvite[] // Use the specific type here too
-  } = data
+  let team = $derived(data.team)
+  let members = $derived(data.members)
+  let isOwner = $derived(data.isOwner)
+  let pendingInvites = $derived(data.pendingInvites)
 
   let editingName = $state(false)
+  // svelte-ignore state_referenced_locally
   let teamNameInput = $state(team.team_name)
 
   // --- New State for Editing Roles ---

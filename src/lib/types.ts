@@ -40,3 +40,9 @@ export type DashboardProject = {
 export type RelationshipProperties = {
   description?: string
 }
+
+export type ElementProperties = {
+  agent_suggestion?: boolean
+  description?: string
+  [key: string]: unknown
+}

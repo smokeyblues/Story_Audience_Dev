@@ -151,9 +151,8 @@
         <li class="flex items-start">
           <span class="text-primary mr-3 mt-1">✓</span>
           <span
-            ><strong>Test Your Ideas:</strong> Go from concept to investor-ready
-            IP by building a real-world audience hungry for what you come up with
-            next.</span
+            ><strong>Test Your Ideas:</strong> Go from concept to investor-ready IP
+            by building a real-world audience hungry for what you come up with next.</span
           >
         </li>
         <li class="flex items-start">
@@ -193,9 +192,9 @@
         <li class="flex items-start">
           <span class="text-info mr-3 mt-1">✓</span>
           <span
-            ><strong>You Give the Greenlight:</strong> Your subscription isn't a
-            fee, it's power. You (and the rest of our Producers) have 100% control
-            over what gets made.</span
+            ><strong>You Give the Greenlight:</strong> Your subscription isn't a fee,
+            it's power. You (and the rest of our Producers) have 100% control over
+            what gets made.</span
           >
         </li>
         <li class="flex items-start">
@@ -210,10 +209,10 @@
           <span class="text-info mr-3 mt-1">✓</span>
           <span
             ><strong>Wield Your Influence:</strong> As a Producer (5 votes) or EP
-            (10 votes), you decide how to back projects. Go all-in to champion a
-            single pitch, or spread your votes across multiple projects you believe
-            in. It's a strategic role: you can support a commercial hit that grows
-            the fund, which gives your favorite creators more shots at a greenlight.</span
+            (10 votes), you decide how to back projects. Go all-in to champion a single
+            pitch, or spread your votes across multiple projects you believe in. It's
+            a strategic role: you can support a commercial hit that grows the fund,
+            which gives your favorite creators more shots at a greenlight.</span
           >
         </li>
         <li class="flex items-start">
