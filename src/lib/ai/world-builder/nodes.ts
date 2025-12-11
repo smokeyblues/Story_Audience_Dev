@@ -1,15 +1,11 @@
 import { SystemMessage } from "@langchain/core/messages"
-import { ChatGoogleGenerativeAI } from "@langchain/google-genai"
 import { elementTypes } from "$lib/worldBuilding"
 import { type GraphState } from "./state"
 import { extractionSchema } from "./schema"
 import { GEMINI_API_KEY } from "$env/static/private"
 
-// REMOVE the top-level model instantiation
-// const model = new ChatGoogleGenerativeAI({ ... })
-
-// ADD a helper to get the model lazily
-function getModel() {
+async function getModel() {
+  const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai")
   return new ChatGoogleGenerativeAI({
     model: "gemini-2.5-flash",
     temperature: 0.7,
@@ -40,7 +36,7 @@ GUIDELINES:
 
 export async function interviewerNode(state: GraphState) {
   // Use the helper here
-  const model = getModel()
+  const model = await getModel()
 
   const messages = [
     new SystemMessage(INTERVIEWER_SYSTEM_PROMPT),
@@ -63,7 +59,7 @@ export async function interviewerNode(state: GraphState) {
  */
 export async function architectNode(state: GraphState) {
   // Use the helper here
-  const model = getModel()
+  const model = await getModel()
   const structuredModel = model.withStructuredOutput(extractionSchema)
 
   // 1. Create a "Rulebook" from your config
