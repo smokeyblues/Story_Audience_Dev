@@ -1,7 +1,4 @@
-import {
-  PUBLIC_SUPABASE_ANON_KEY,
-  PUBLIC_SUPABASE_URL,
-} from "$env/static/public"
+import { env } from "$env/dynamic/public" // Use dynamic public env
 import {
   createBrowserClient,
   createServerClient,
@@ -16,21 +13,29 @@ export const load = async ({ fetch, data, depends, url }) => {
   depends("supabase:auth")
 
   const supabase = isBrowser()
-    ? createBrowserClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-        global: {
-          fetch,
-        },
-      })
-    : createServerClient(PUBLIC_SUPABASE_URL, PUBLIC_SUPABASE_ANON_KEY, {
-        global: {
-          fetch,
-        },
-        cookies: {
-          getAll() {
-            return data.cookies
+    ? createBrowserClient(
+        env.PUBLIC_SUPABASE_URL,
+        env.PUBLIC_SUPABASE_ANON_KEY,
+        {
+          global: {
+            fetch,
           },
         },
-      })
+      )
+    : createServerClient(
+        env.PUBLIC_SUPABASE_URL,
+        env.PUBLIC_SUPABASE_ANON_KEY,
+        {
+          global: {
+            fetch,
+          },
+          cookies: {
+            getAll() {
+              return data.cookies
+            },
+          },
+        },
+      )
 
   const { session, user } = await load_helper(data.session, supabase)
   if (!session || !user) {
