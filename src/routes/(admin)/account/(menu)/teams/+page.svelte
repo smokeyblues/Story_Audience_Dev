@@ -3,6 +3,16 @@
   import { enhance } from "$app/forms"
 
   export let data: PageData
+
+  let deleteModal: HTMLDialogElement
+  let teamToDelete: { team_id: string; team_name: string } | null = null
+  let confirmationName = ""
+
+  function promptDelete(team: { team_id: string; team_name: string }) {
+    teamToDelete = team
+    confirmationName = ""
+    deleteModal.showModal()
+  }
 </script>
 
 <div class="space-y-6">
@@ -15,7 +25,7 @@
             <div class="flex justify-between items-center">
               <a
                 href="/account/teams/{team_detail.team_id}"
-                class="flex-grow hover:underline"
+                class="grow hover:underline"
               >
                 <div>
                   <p class="font-bold">{team_detail.team_name}</p>
@@ -25,33 +35,19 @@
                 </div>
               </a>
               {#if team_detail.user_role === "owner"}
-                <div class="flex gap-2 flex-shrink-0">
+                <div class="flex gap-2 shrink-0">
                   <a
-                    href="/account/teams/{team_detail.team_id}/edit"
+                    href="/account/teams/{team_detail.team_id}"
                     class="btn btn-sm"
                   >
                     Edit
                   </a>
-                  <form
-                    method="POST"
-                    action="?/deleteTeam"
-                    use:enhance={() => {
-                      return async ({ result }) => {
-                        if (result.type === "success") {
-                          // Optionally refresh data or remove item from UI
-                        }
-                      }
-                    }}
+                  <button
+                    class="btn btn-sm btn-error"
+                    on:click={() => promptDelete(team_detail)}
                   >
-                    <input
-                      type="hidden"
-                      name="team_id"
-                      value={team_detail.team_id}
-                    />
-                    <button type="submit" class="btn btn-sm btn-error"
-                      >Delete</button
-                    >
-                  </form>
+                    Delete
+                  </button>
                 </div>
               {/if}
             </div>
@@ -81,9 +77,9 @@
                   method="POST"
                   action="?/acceptInvite"
                   use:enhance={() => {
-                    return async ({ result }) => {
+                    return async ({ result, update }) => {
                       if (result.type === "success") {
-                        // Refresh page or handle UI update
+                        await update()
                       }
                     }
                   }}
@@ -97,9 +93,9 @@
                   method="POST"
                   action="?/declineInvite"
                   use:enhance={() => {
-                    return async ({ result }) => {
+                    return async ({ result, update }) => {
                       if (result.type === "success") {
-                        // Refresh page or handle UI update
+                        await update()
                       }
                     }
                   }}
@@ -117,3 +113,58 @@
     {/if}
   </div>
 </div>
+
+<dialog bind:this={deleteModal} class="modal">
+  <div class="modal-box">
+    <h3 class="font-bold text-lg">Delete Team</h3>
+    {#if teamToDelete}
+      <p class="py-4">
+        Are you sure you want to delete <span class="font-bold"
+          >{teamToDelete.team_name}</span
+        >? This action cannot be undone.
+      </p>
+      <p class="mb-4 text-sm">
+        Please type <span class="font-mono bg-base-200 px-1 rounded"
+          >{teamToDelete.team_name}</span
+        > to confirm.
+      </p>
+
+      <input
+        type="text"
+        class="input input-bordered w-full mb-4"
+        bind:value={confirmationName}
+        placeholder="Type team name"
+      />
+
+      <div class="modal-action">
+        <form method="dialog">
+          <button class="btn">Cancel</button>
+        </form>
+        <form
+          method="POST"
+          action="?/deleteTeam"
+          use:enhance={() => {
+            return async ({ result, update }) => {
+              if (result.type === "success") {
+                deleteModal.close()
+                await update()
+              }
+            }
+          }}
+        >
+          <input type="hidden" name="team_id" value={teamToDelete.team_id} />
+          <button
+            type="submit"
+            class="btn btn-error"
+            disabled={confirmationName !== teamToDelete.team_name}
+          >
+            Delete Team
+          </button>
+        </form>
+      </div>
+    {/if}
+  </div>
+  <form method="dialog" class="modal-backdrop">
+    <button>close</button>
+  </form>
+</dialog>

@@ -577,7 +577,7 @@ export const actions: Actions = {
       return fail(400, {
         ...baseActionData,
         error:
-          emailValidation.error.errors[0]?.message ?? "Invalid email format.",
+          emailValidation.error.issues[0]?.message ?? "Invalid email format.",
       })
     }
     const validatedEmail = emailValidation.data // Use the validated email

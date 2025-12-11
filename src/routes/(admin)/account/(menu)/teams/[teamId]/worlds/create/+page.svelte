@@ -3,14 +3,15 @@
   import { tick } from "svelte"
   // import { supabase } from "$lib/supabaseClient" // Remove this import
 
-  let { data } = $props()
-  let supabase = $derived(data.supabase)
+  // let { data } = $props() // unused
+  // let supabase = $derived(data.supabase) // unused
 
   // State for the chat
   let messages = $state([
     {
       role: "model",
-      text: "I'm ready to help you build a new world. What kind of story are you trying to tell?",
+      content:
+        "I'm ready to help you build a new world. What kind of story are you trying to tell?",
     },
   ])
   let userInput = $state("")
@@ -33,57 +34,73 @@
     if (!userInput.trim() || isLoading) return
 
     // 1. Add user message to UI
-    const newMsg = { role: "user", text: userInput }
+    const newMsg = { role: "user", content: userInput }
     messages = [...messages, newMsg]
     userInput = ""
     isLoading = true
 
     try {
-      console.log("Sending message to agent:", newMsg)
-      // 2. Call the Edge Function using supabase.functions.invoke/+page.svelte]
-      const { data, error } = await supabase.functions.invoke(
-        "world-creator-agent",
-        {
-          body: {
-            messages: messages.map((m) => ({
-              role: m.role === "model" ? "model" : "user",
-              parts: [{ text: m.text }],
-            })),
-          },
+      const response = await fetch("/api/world-builder", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ messages }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to fetch")
+      }
+
+      // 3. Update the conversation
+      // The graph returns the full updated history, so we sync with that.
+      // NEW code to add
+      // 3. Update the conversation
+      messages = data.messages.map(
+        (m: {
+          type: string
+          id?: string[]
+          content?: string
+          kwargs?: { content: string }
+        }) => {
+          // ROLE: Check both the simple 'type' and the serialized 'id' array
+          const isHuman =
+            m.type === "human" ||
+            (Array.isArray(m.id) && m.id.includes("HumanMessage"))
+
+          // CONTENT: content might be at the top level OR hidden inside 'kwargs'
+          const content = m.content || m.kwargs?.content || ""
+
+          return {
+            role: isHuman ? "user" : "model",
+            content: content,
+          }
         },
       )
-      console.log("Agent response:", { data, error })
 
-      if (error) {
-        throw error
-      }
-
-      if (data.error) {
-        throw new Error(data.error)
-      }
-
-      if (data.reply) {
-        messages = [...messages, { role: "model", text: data.reply }]
-      }
-
-      // 3. Handle Completion
-      if (data.is_finished && data.extracted_data) {
+      // 4. Check for the "Finish" signal
+      if (data.isFinished) {
         isFinished = true
-        worldDataJSON = JSON.stringify(data.extracted_data)
 
-        // Wait for the hidden input to populate, then submit
+        // This is where we receive the structured data from the Architect!
+        // You can save this to your form state or display a preview.
+        console.log("Architect Output:", data.world, data.elements)
+
+        // Example: Auto-fill the hidden form field if you want to save it immediately
+        worldDataJSON = JSON.stringify({
+          world: data.world,
+          elements: data.elements,
+          relationships: data.relationships,
+        })
+
         await tick()
-        if (formElement) formElement.requestSubmit()
+        formElement.requestSubmit()
       }
     } catch (e) {
-      console.error("Agent Error:", e)
-      messages = [
-        ...messages,
-        {
-          role: "model",
-          text: "I encountered an error trying to process that. Could you try again?",
-        },
-      ]
+      console.error(e)
+      // Handle error state here (e.g., show a toast)
     } finally {
       isLoading = false
     }
@@ -104,7 +121,7 @@
             ? 'chat-bubble-primary'
             : 'chat-bubble-secondary'}"
         >
-          {msg.text}
+          {msg.content}
         </div>
       </div>
     {/each}
@@ -149,6 +166,6 @@
     bind:this={formElement}
     class="hidden"
   >
-    <input type="hidden" name="worldData" value={worldDataJSON} />
+    <input type="hidden" name="worldDataJSON" value={worldDataJSON} />
   </form>
 </div>

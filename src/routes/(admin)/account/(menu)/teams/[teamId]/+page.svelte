@@ -113,7 +113,7 @@
                 await invalidateAll()
               }
             }}
-            class="flex-grow mr-4"
+            class="grow mr-4"
           >
             <input
               type="text"
