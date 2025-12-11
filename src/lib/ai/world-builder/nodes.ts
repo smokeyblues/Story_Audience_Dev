@@ -2,14 +2,14 @@ import { SystemMessage } from "@langchain/core/messages"
 import { elementTypes } from "$lib/worldBuilding"
 import { type GraphState } from "./state"
 import { extractionSchema } from "./schema"
-import { GEMINI_API_KEY } from "$env/static/private"
+import { env } from "$env/dynamic/private"
 
 async function getModel() {
   const { ChatGoogleGenerativeAI } = await import("@langchain/google-genai")
   return new ChatGoogleGenerativeAI({
     model: "gemini-2.5-flash",
     temperature: 0.7,
-    apiKey: GEMINI_API_KEY,
+    apiKey: env.GEMINI_API_KEY,
   })
 }
 
