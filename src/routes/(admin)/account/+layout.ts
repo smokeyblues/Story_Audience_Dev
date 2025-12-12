@@ -1,4 +1,5 @@
 import { env } from "$env/dynamic/public" // Use dynamic public env
+import { building } from "$app/environment"
 import {
   createBrowserClient,
   createServerClient,
@@ -14,8 +15,8 @@ export const load = async ({ fetch, data, depends, url }) => {
 
   const supabase = isBrowser()
     ? createBrowserClient(
-        env.PUBLIC_SUPABASE_URL,
-        env.PUBLIC_SUPABASE_ANON_KEY,
+        env.PUBLIC_SUPABASE_URL || (building ? "https://example.com" : ""),
+        env.PUBLIC_SUPABASE_ANON_KEY || (building ? "placeholder-key" : ""),
         {
           global: {
             fetch,
@@ -23,8 +24,8 @@ export const load = async ({ fetch, data, depends, url }) => {
         },
       )
     : createServerClient(
-        env.PUBLIC_SUPABASE_URL,
-        env.PUBLIC_SUPABASE_ANON_KEY,
+        env.PUBLIC_SUPABASE_URL || (building ? "https://example.com" : ""),
+        env.PUBLIC_SUPABASE_ANON_KEY || (building ? "placeholder-key" : ""),
         {
           global: {
             fetch,

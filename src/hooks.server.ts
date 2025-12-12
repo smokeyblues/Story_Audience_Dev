@@ -1,6 +1,7 @@
 // src/hooks.server.ts
 import { env } from "$env/dynamic/private"
 import { env as publicEnv } from "$env/dynamic/public"
+import { building } from "$app/environment"
 import { createServerClient } from "@supabase/ssr"
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import type { Handle } from "@sveltejs/kit"
@@ -9,8 +10,8 @@ import type { Database } from "./DatabaseDefinitions"
 
 export const supabase: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient<Database>(
-    publicEnv.PUBLIC_SUPABASE_URL,
-    publicEnv.PUBLIC_SUPABASE_ANON_KEY,
+    publicEnv.PUBLIC_SUPABASE_URL || (building ? "https://example.com" : ""),
+    publicEnv.PUBLIC_SUPABASE_ANON_KEY || (building ? "placeholder-key" : ""),
     {
       cookies: {
         getAll: () => event.cookies.getAll(),
@@ -29,8 +30,8 @@ export const supabase: Handle = async ({ event, resolve }) => {
   ) as unknown as SupabaseClient<Database>
 
   event.locals.supabaseServiceRole = createClient(
-    publicEnv.PUBLIC_SUPABASE_URL,
-    env.PRIVATE_SUPABASE_SERVICE_ROLE,
+    publicEnv.PUBLIC_SUPABASE_URL || (building ? "https://example.com" : ""),
+    env.PRIVATE_SUPABASE_SERVICE_ROLE || (building ? "placeholder-key" : ""),
     { auth: { persistSession: false } },
   )
 

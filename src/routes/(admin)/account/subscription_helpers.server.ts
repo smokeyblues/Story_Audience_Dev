@@ -3,13 +3,17 @@ import type { Database } from "../../../DatabaseDefinitions"
 
 // CHANGED: Use dynamic import for runtime secrets
 import { env } from "$env/dynamic/private"
+import { building } from "$app/environment"
 import Stripe from "stripe"
 import { pricingPlans } from "../../(marketing)/pricing/pricing_plans"
 
 // Use env.PRIVATE_STRIPE_API_KEY instead of the direct import
-const stripe = new Stripe(env.PRIVATE_STRIPE_API_KEY, {
-  apiVersion: "2023-08-16",
-})
+const stripe = new Stripe(
+  env.PRIVATE_STRIPE_API_KEY || (building ? "placeholder-key" : ""),
+  {
+    apiVersion: "2023-08-16",
+  },
+)
 
 export const getOrCreateCustomerId = async ({
   supabaseServiceRole,
