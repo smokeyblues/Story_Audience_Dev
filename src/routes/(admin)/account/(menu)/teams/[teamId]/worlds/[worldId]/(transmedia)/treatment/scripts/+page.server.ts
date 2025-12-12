@@ -1,17 +1,20 @@
 import { fail, redirect } from "@sveltejs/kit"
 import type { Actions, PageServerLoad } from "./$types"
 import { createClient } from "@supabase/supabase-js"
-import { PUBLIC_SUPABASE_URL } from "$env/static/public"
-import { PRIVATE_SUPABASE_SERVICE_ROLE } from "$env/static/private"
+import { env as publicEnv } from "$env/dynamic/public"
+import { env } from "$env/dynamic/private"
 
 // Helper to create a Supabase client with admin privileges
 const createAdminClient = () => {
-  if (!PRIVATE_SUPABASE_SERVICE_ROLE) {
+  if (!env.PRIVATE_SUPABASE_SERVICE_ROLE) {
     throw new Error(
       "PRIVATE_SUPABASE_SERVICE_ROLE is not set in environment variables",
     )
   }
-  return createClient(PUBLIC_SUPABASE_URL, PRIVATE_SUPABASE_SERVICE_ROLE)
+  return createClient(
+    publicEnv.PUBLIC_SUPABASE_URL,
+    env.PRIVATE_SUPABASE_SERVICE_ROLE,
+  )
 }
 
 export const load: PageServerLoad = async ({

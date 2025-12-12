@@ -1,9 +1,6 @@
 // src/hooks.server.ts
-import { PRIVATE_SUPABASE_SERVICE_ROLE } from "$env/static/private"
-import {
-  PUBLIC_SUPABASE_ANON_KEY,
-  PUBLIC_SUPABASE_URL,
-} from "$env/static/public"
+import { env } from "$env/dynamic/private"
+import { env as publicEnv } from "$env/dynamic/public"
 import { createServerClient } from "@supabase/ssr"
 import { createClient, type SupabaseClient } from "@supabase/supabase-js"
 import type { Handle } from "@sveltejs/kit"
@@ -12,8 +9,8 @@ import type { Database } from "./DatabaseDefinitions"
 
 export const supabase: Handle = async ({ event, resolve }) => {
   event.locals.supabase = createServerClient<Database>(
-    PUBLIC_SUPABASE_URL,
-    PUBLIC_SUPABASE_ANON_KEY,
+    publicEnv.PUBLIC_SUPABASE_URL,
+    publicEnv.PUBLIC_SUPABASE_ANON_KEY,
     {
       cookies: {
         getAll: () => event.cookies.getAll(),
@@ -32,8 +29,8 @@ export const supabase: Handle = async ({ event, resolve }) => {
   ) as unknown as SupabaseClient<Database>
 
   event.locals.supabaseServiceRole = createClient(
-    PUBLIC_SUPABASE_URL,
-    PRIVATE_SUPABASE_SERVICE_ROLE,
+    publicEnv.PUBLIC_SUPABASE_URL,
+    env.PRIVATE_SUPABASE_SERVICE_ROLE,
     { auth: { persistSession: false } },
   )
 
