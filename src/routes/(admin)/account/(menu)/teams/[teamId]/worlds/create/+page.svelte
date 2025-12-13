@@ -2,6 +2,7 @@
   import { enhance } from "$app/forms"
   import { tick } from "svelte"
   import MarkdownDisplay from "$lib/components/MarkdownDisplay.svelte"
+  import { Send, Maximize2, Minimize2 } from "lucide-svelte"
   // import { supabase } from "$lib/supabaseClient" // Remove this import
 
   // let { data } = $props() // unused
@@ -18,7 +19,9 @@
   let userInput = $state("")
   let isLoading = $state(false)
   let isFinished = $state(false)
+  let isFullscreen = $state(false)
   let chatContainer: HTMLElement
+  let textareaElement = $state<HTMLTextAreaElement>()
 
   // State for the final form submission
   let worldDataJSON = $state("")
@@ -31,6 +34,29 @@
     }
   })
 
+  function adjustHeight() {
+    if (!textareaElement) return
+    textareaElement.style.height = "auto"
+
+    if (!isFullscreen) {
+      textareaElement.style.height =
+        Math.min(textareaElement.scrollHeight, 150) + "px"
+    } else {
+      textareaElement.style.height = "100%"
+    }
+  }
+
+  // Watch isFullscreen changes to reset height if needed
+  $effect(() => {
+    if (isFullscreen && textareaElement) {
+      // When entering fullscreen, let CSS handle height (h-full)
+      textareaElement.style.height = ""
+    } else if (!isFullscreen && textareaElement) {
+      // When exiting, re-adjust to content
+      adjustHeight()
+    }
+  })
+
   async function sendMessage() {
     if (!userInput.trim() || isLoading) return
 
@@ -38,6 +64,9 @@
     const newMsg = { role: "user", content: userInput }
     messages = [...messages, newMsg]
     userInput = ""
+    if (textareaElement) {
+      textareaElement.style.height = "auto"
+    }
     isLoading = true
 
     try {
@@ -136,22 +165,87 @@
   </div>
 
   {#if !isFinished}
-    <div class="join w-full">
-      <input
-        type="text"
-        class="input input-bordered join-item w-full"
-        placeholder="Describe your world..."
-        bind:value={userInput}
-        onkeydown={(e) => e.key === "Enter" && sendMessage()}
-        disabled={isLoading}
-      />
-      <button
-        class="btn btn-primary join-item"
-        onclick={sendMessage}
-        disabled={isLoading}
+    <div
+      class={isFullscreen
+        ? "fixed inset-0 z-50 bg-base-100/90 backdrop-blur-sm p-4 flex flex-col justify-center items-center"
+        : "join w-full relative"}
+    >
+      <div
+        class="w-full flex flex-col {isFullscreen
+          ? 'max-w-2xl h-[calc(100vh-4rem)] bg-base-100 rounded-box shadow-xl border border-base-300 p-4'
+          : ''}"
       >
-        Send
-      </button>
+        {#if isFullscreen}
+          <div class="flex justify-between items-center mb-2">
+            <h3 class="font-bold text-lg">Expanded Editor</h3>
+            <button
+              class="btn btn-ghost btn-sm"
+              onclick={() => (isFullscreen = false)}
+              aria-label="Exit fullscreen"
+            >
+              <Minimize2 size={20} />
+            </button>
+          </div>
+        {/if}
+
+        <div
+          class="relative w-full {isFullscreen ? 'flex-1 h-full' : 'join-item'}"
+        >
+          {#if !isFullscreen && (userInput.length > 50 || userInput.includes("\n"))}
+            <button
+              class="absolute top-2 right-2 btn btn-xs btn-circle btn-ghost z-10"
+              onclick={() => (isFullscreen = true)}
+              title="Expand to fullscreen"
+            >
+              <Maximize2 size={16} />
+            </button>
+          {/if}
+
+          <textarea
+            bind:this={textareaElement}
+            class="textarea w-full {isFullscreen
+              ? 'h-full resize-none p-4 text-lg focus:outline-none border-none shadow-none'
+              : 'textarea-bordered resize-none min-h-12 py-3'}"
+            placeholder="Describe your world..."
+            bind:value={userInput}
+            oninput={adjustHeight}
+            onkeydown={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault()
+                sendMessage()
+              }
+            }}
+            disabled={isLoading}
+            rows="1"
+          ></textarea>
+        </div>
+
+        {#if !isFullscreen}
+          <button
+            class="btn btn-primary join-item"
+            onclick={sendMessage}
+            disabled={isLoading}
+            aria-label="Send message"
+          >
+            <Send size={20} />
+          </button>
+        {/if}
+
+        {#if isFullscreen}
+          <div class="mt-4 flex justify-end">
+            <button
+              class="btn btn-primary"
+              onclick={() => {
+                isFullscreen = false
+                sendMessage()
+              }}
+              disabled={isLoading}
+            >
+              Send <Send size={20} class="ml-2" />
+            </button>
+          </div>
+        {/if}
+      </div>
     </div>
   {:else}
     <div class="alert alert-success">
