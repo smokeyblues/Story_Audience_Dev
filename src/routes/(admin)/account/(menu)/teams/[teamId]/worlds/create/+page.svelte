@@ -18,6 +18,7 @@
   ])
   let userInput = $state("")
   let isLoading = $state(false)
+  let loadingMessage = $state("Thinking...")
   let isFinished = $state(false)
   let isFullscreen = $state(false)
   let chatContainer: HTMLElement
@@ -68,6 +69,12 @@
       textareaElement.style.height = "auto"
     }
     isLoading = true
+    loadingMessage = "Thinking..."
+
+    // Set a timer to change the message after 3 seconds
+    const timer = setTimeout(() => {
+      loadingMessage = "I think I have enough to begin building your world..."
+    }, 3000)
 
     try {
       const response = await fetch("/api/world-builder", {
@@ -132,6 +139,7 @@
       console.error(e)
       // Handle error state here (e.g., show a toast)
     } finally {
+      clearTimeout(timer)
       isLoading = false
     }
   }
@@ -158,7 +166,7 @@
     {#if isLoading}
       <div class="chat chat-start">
         <div class="chat-bubble chat-bubble-secondary animate-pulse">
-          Thinking...
+          {loadingMessage}
         </div>
       </div>
     {/if}
