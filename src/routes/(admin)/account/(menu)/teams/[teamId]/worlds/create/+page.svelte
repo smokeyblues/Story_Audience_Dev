@@ -1,6 +1,7 @@
 <script lang="ts">
   import { enhance } from "$app/forms"
   import { tick } from "svelte"
+  import MarkdownDisplay from "$lib/components/MarkdownDisplay.svelte"
   // import { supabase } from "$lib/supabaseClient" // Remove this import
 
   // let { data } = $props() // unused
@@ -121,7 +122,7 @@
             ? 'chat-bubble-primary'
             : 'chat-bubble-secondary'}"
         >
-          {msg.content}
+          <MarkdownDisplay content={msg.content} />
         </div>
       </div>
     {/each}
